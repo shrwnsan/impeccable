@@ -66,9 +66,9 @@ async function getCommands() {
 function getFilePath(type, provider, id) {
   if (type === "skill") {
     if (provider === "cursor") {
-      return join(DIST_DIR, "cursor", "rules", `${id}.md`);
+      return join(DIST_DIR, "cursor", ".cursor", "rules", `${id}.md`);
     } else if (provider === "claude-code") {
-      return join(DIST_DIR, "claude-code", "skills", id, "SKILL.md");
+      return join(DIST_DIR, "claude-code", ".claude", "skills", id, "SKILL.md");
     } else if (provider === "gemini") {
       return join(DIST_DIR, "gemini", `GEMINI.${id}.md`);
     } else if (provider === "codex") {
@@ -76,13 +76,13 @@ function getFilePath(type, provider, id) {
     }
   } else if (type === "command") {
     if (provider === "cursor") {
-      return join(DIST_DIR, "cursor", "commands", `${id}.md`);
+      return join(DIST_DIR, "cursor", ".cursor", "commands", `${id}.md`);
     } else if (provider === "claude-code") {
-      return join(DIST_DIR, "claude-code", "commands", `${id}.md`);
+      return join(DIST_DIR, "claude-code", ".claude", "commands", `${id}.md`);
     } else if (provider === "gemini") {
-      return join(DIST_DIR, "gemini", "commands", `${id}.toml`);
+      return join(DIST_DIR, "gemini", ".gemini", "commands", `${id}.toml`);
     } else if (provider === "codex") {
-      return join(DIST_DIR, "codex", "prompts", `${id}.md`);
+      return join(DIST_DIR, "codex", ".codex", "prompts", `${id}.md`);
     }
   }
   return null;

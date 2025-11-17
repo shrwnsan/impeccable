@@ -98,19 +98,18 @@ After downloading from [impeccable.style](https://impeccable.style) or cloning t
 
 ### Cursor
 
-**From Website**: Download the Cursor bundle ZIP from [impeccable.style](https://impeccable.style), unzip, and copy to your project:
+**From Website**: Download the Cursor bundle ZIP from [impeccable.style](https://impeccable.style) and extract directly into your project:
 
 ```bash
-# After unzipping the downloaded bundle
-cp -r cursor/commands/* your-project/.cursor/commands/
-cp -r cursor/rules/* your-project/.cursor/rules/
+# Extract the ZIP directly into your project root
+# The ZIP contains a .cursor/ folder ready to use
+unzip impeccable-style-cursor.zip -d your-project/
 ```
 
 **From Repo**: Copy directly from the dist directory:
 
 ```bash
-cp -r dist/cursor/commands/* .cursor/commands/
-cp -r dist/cursor/rules/* .cursor/rules/
+cp -r dist/cursor/.cursor .cursor/
 ```
 
 **Note**: Cursor doesn't support command arguments or frontmatter, so commands work but with simplified functionality.
@@ -121,23 +120,25 @@ cp -r dist/cursor/rules/* .cursor/rules/
 
 ### Claude Code
 
-**From Website**: Download the Claude Code bundle ZIP from [impeccable.style](https://impeccable.style), unzip, and copy:
+**From Website**: Download the Claude Code bundle ZIP from [impeccable.style](https://impeccable.style) and extract:
 
 ```bash
 # Global installation
-cp -r claude-code/commands/* ~/.claude/commands/
-cp -r claude-code/skills/* ~/.claude/skills/
+unzip impeccable-style-claude-code.zip
+cp -r .claude/* ~/.claude/
 
 # Or project-specific
-cp -r claude-code/commands/* .claude/commands/
-cp -r claude-code/skills/* .claude/skills/
+unzip impeccable-style-claude-code.zip -d your-project/
 ```
 
 **From Repo**:
 
 ```bash
-cp -r dist/claude-code/commands/* ~/.claude/commands/
-cp -r dist/claude-code/skills/* ~/.claude/skills/
+# Global installation
+cp -r dist/claude-code/.claude/* ~/.claude/
+
+# Or project-specific
+cp -r dist/claude-code/.claude .claude/
 ```
 
 **Reference**: 
@@ -146,20 +147,23 @@ cp -r dist/claude-code/skills/* ~/.claude/skills/
 
 ### Gemini CLI
 
-**From Website**: Download the Gemini CLI bundle ZIP from [impeccable.style](https://impeccable.style), unzip, and copy:
+**From Website**: Download the Gemini CLI bundle ZIP from [impeccable.style](https://impeccable.style) and extract:
 
 ```bash
+# Extract and install
+unzip impeccable-style-gemini.zip
+
 # Commands (global)
-cp -r gemini/commands/* ~/.gemini/commands/
+cp -r .gemini/* ~/.gemini/
 
 # Skills (project-specific)
-cp gemini/GEMINI*.md ~/your-project-root/
+cp GEMINI*.md ~/your-project-root/
 ```
 
 **From Repo**:
 
 ```bash
-cp -r dist/gemini/commands/* ~/.gemini/commands/
+cp -r dist/gemini/.gemini/* ~/.gemini/
 cp dist/gemini/GEMINI*.md ~/your-project-root/
 ```
 
@@ -175,20 +179,23 @@ cp dist/gemini/GEMINI*.md ~/your-project-root/
 
 ### Codex CLI
 
-**From Website**: Download the Codex CLI bundle ZIP from [impeccable.style](https://impeccable.style), unzip, and copy:
+**From Website**: Download the Codex CLI bundle ZIP from [impeccable.style](https://impeccable.style) and extract:
 
 ```bash
+# Extract and install
+unzip impeccable-style-codex.zip
+
 # Prompts (global)
-cp -r codex/prompts/* ~/.codex/prompts/
+cp -r .codex/* ~/.codex/
 
 # Skills (project-specific)
-cp codex/AGENTS*.md ~/your-project-root/
+cp AGENTS*.md ~/your-project-root/
 ```
 
 **From Repo**:
 
 ```bash
-cp -r dist/codex/prompts/* ~/.codex/prompts/
+cp -r dist/codex/.codex/* ~/.codex/
 cp dist/codex/AGENTS*.md ~/your-project-root/
 ```
 

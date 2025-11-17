@@ -9,7 +9,7 @@ import { cleanDir, ensureDir, writeFile } from '../utils.js';
  */
 export function transformCodex(commands, skills, distDir) {
   const codexDir = path.join(distDir, 'codex');
-  const promptsDir = path.join(codexDir, 'prompts');
+  const promptsDir = path.join(codexDir, '.codex/prompts');
   
   cleanDir(codexDir);
   ensureDir(promptsDir);

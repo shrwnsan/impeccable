@@ -8,10 +8,11 @@ import { cleanDir, ensureDir, writeFile, generateYamlFrontmatter } from '../util
  * Skills stored in subdirectories with SKILL.md filename.
  */
 export function transformClaudeCode(commands, skills, distDir) {
-  const commandsDir = path.join(distDir, 'claude-code/commands');
-  const skillsDir = path.join(distDir, 'claude-code/skills');
+  const claudeDir = path.join(distDir, 'claude-code');
+  const commandsDir = path.join(claudeDir, '.claude/commands');
+  const skillsDir = path.join(claudeDir, '.claude/skills');
   
-  cleanDir(path.join(distDir, 'claude-code'));
+  cleanDir(claudeDir);
   ensureDir(commandsDir);
   ensureDir(skillsDir);
   

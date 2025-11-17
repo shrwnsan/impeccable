@@ -8,10 +8,11 @@ import { cleanDir, ensureDir, writeFile } from '../utils.js';
  * Cursor doesn't support arguments or frontmatter.
  */
 export function transformCursor(commands, skills, distDir) {
-  const commandsDir = path.join(distDir, 'cursor/commands');
-  const rulesDir = path.join(distDir, 'cursor/rules');
+  const cursorDir = path.join(distDir, 'cursor');
+  const commandsDir = path.join(cursorDir, '.cursor/commands');
+  const rulesDir = path.join(cursorDir, '.cursor/rules');
   
-  cleanDir(path.join(distDir, 'cursor'));
+  cleanDir(cursorDir);
   ensureDir(commandsDir);
   ensureDir(rulesDir);
   

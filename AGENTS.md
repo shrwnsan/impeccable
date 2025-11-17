@@ -32,17 +32,21 @@ vibe-design-plugins/
 │       └── frontend-design.md
 ├── dist/                        # Generated outputs (committed for users)
 │   ├── cursor/                  # Downgraded (no frontmatter)
-│   │   ├── commands/*.md
-│   │   └── rules/*.md
+│   │   └── .cursor/
+│   │       ├── commands/*.md
+│   │       └── rules/*.md
 │   ├── claude-code/             # Full featured
-│   │   ├── commands/*.md
-│   │   └── skills/*/SKILL.md
+│   │   └── .claude/
+│   │       ├── commands/*.md
+│   │       └── skills/*/SKILL.md
 │   ├── gemini/                  # TOML commands + modular skills
-│   │   ├── commands/*.toml
+│   │   ├── .gemini/
+│   │   │   └── commands/*.toml
 │   │   ├── GEMINI.md
 │   │   └── GEMINI.*.md
 │   └── codex/                   # Custom prompts + modular skills
-│       ├── prompts/*.md
+│       ├── .codex/
+│       │   └── prompts/*.md
 │       ├── AGENTS.md
 │       └── AGENTS.*.md
 ├── public/                      # Website for impeccable.style
@@ -135,33 +139,37 @@ Run: `bun run build`
 ## Provider Transformations
 
 ### 1. Cursor (Downgraded)
-- **Commands**: Body only → `dist/cursor/commands/*.md`
-- **Skills**: Body only → `dist/cursor/rules/*.md`
+- **Commands**: Body only → `dist/cursor/.cursor/commands/*.md`
+- **Skills**: Body only → `dist/cursor/.cursor/rules/*.md`
 - **Strips**: All frontmatter, all metadata
 - **Args**: Not supported, arguments get appended to end of prompt
+- **Installation**: Extract ZIP into your project root, creates `.cursor/` folder
 
 ### 2. Claude Code (Full Featured)
-- **Commands**: Full YAML frontmatter → `dist/claude-code/commands/*.md`
-- **Skills**: Full YAML frontmatter → `dist/claude-code/skills/{name}/SKILL.md`
+- **Commands**: Full YAML frontmatter → `dist/claude-code/.claude/commands/*.md`
+- **Skills**: Full YAML frontmatter → `dist/claude-code/.claude/skills/{name}/SKILL.md`
 - **Preserves**: All metadata, all args
 - **Format**: Matches [Anthropic Skills spec](https://github.com/anthropics/skills)
+- **Installation**: Extract ZIP into your project root, creates `.claude/` folder
 
 ### 3. Gemini CLI (Full Featured)
-- **Commands**: TOML format → `dist/gemini/commands/*.toml`
+- **Commands**: TOML format → `dist/gemini/.gemini/commands/*.toml`
   - Uses `description` and `prompt` keys
   - Transforms `{{argname}}` → `{{args}}` (Gemini uses single args string)
-- **Skills**: Modular with imports → `dist/gemini/GEMINI.{name}.md`
+- **Skills**: Modular with imports → `dist/gemini/GEMINI.{name}.md` (root level)
   - Main `GEMINI.md` uses `@./GEMINI.{name}.md` import syntax
   - Gemini automatically loads imported files
+- **Installation**: Extract ZIP into your project root, creates `.gemini/` folder + skill files
 
 ### 4. Codex CLI (Full Featured)
-- **Commands**: Custom prompt format → `dist/codex/prompts/*.md`
+- **Commands**: Custom prompt format → `dist/codex/.codex/prompts/*.md`
   - Uses `description` and `argument-hint` in frontmatter
   - Transforms `{{argname}}` → `$ARGNAME` (uppercase variables)
   - Invoked as `/prompts:<name>`
-- **Skills**: Modular with routing → `dist/codex/AGENTS.{name}.md`
+- **Skills**: Modular with routing → `dist/codex/AGENTS.{name}.md` (root level)
   - Main `AGENTS.md` provides routing instructions
   - Tells Codex when to read which skill file
+- **Installation**: Extract ZIP into your project root, creates `.codex/` folder + skill files
 
 ## Key Design Decisions
 

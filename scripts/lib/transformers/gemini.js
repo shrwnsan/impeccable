@@ -9,7 +9,7 @@ import { cleanDir, ensureDir, writeFile } from '../utils.js';
  */
 export function transformGemini(commands, skills, distDir) {
   const geminiDir = path.join(distDir, 'gemini');
-  const commandsDir = path.join(geminiDir, 'commands');
+  const commandsDir = path.join(geminiDir, '.gemini/commands');
   
   cleanDir(geminiDir);
   ensureDir(commandsDir);
