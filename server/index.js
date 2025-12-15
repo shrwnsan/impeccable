@@ -1,10 +1,11 @@
 import { serve } from "bun";
 import homepage from "../public/index.html";
-import { 
-  getSkills, 
-  getCommands, 
-  handleFileDownload, 
-  handleBundleDownload 
+import {
+  getSkills,
+  getCommands,
+  getPatterns,
+  handleFileDownload,
+  handleBundleDownload
 } from "./lib/api-handlers.js";
 
 const server = serve({
@@ -28,7 +29,15 @@ const server = serve({
         return Response.json(commands);
       },
     },
-    
+
+    // API: Get patterns and antipatterns
+    "/api/patterns": {
+      async GET() {
+        const patterns = await getPatterns();
+        return Response.json(patterns);
+      },
+    },
+
     // API: Download individual file
     "/api/download/:type/:provider/:id": async (req) => {
       const { type, provider, id } = req.params;

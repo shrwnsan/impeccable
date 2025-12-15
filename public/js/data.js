@@ -5,57 +5,36 @@
 // Items that are fully complete and ready for public use
 // All others will show "Coming Soon"
 export const readySkills = [
-  // None ready yet - all skills are still being refined
+  'frontend-design'  // Consolidated skill with all design domains
 ];
 
 export const readyCommands = [
   'normalize'  // First command to be fully completed
 ];
 
+// Consolidated frontend-design skill with reference domains
 export const skillFocusAreas = {
-  'typography': [
-    { area: 'Scale & Rhythm', detail: 'Harmonious systems' },
-    { area: 'Hierarchy', detail: 'Clear structure' },
-    { area: 'Readability', detail: 'Optimal measure' },
-    { area: 'Expression', detail: 'Character in type' }
-  ],
-  'color-and-contrast': [
-    { area: 'Accessibility', detail: 'WCAG contrast' },
-    { area: 'Color Systems', detail: 'Systematic palettes' },
-    { area: 'Dark Mode', detail: 'Balanced themes' },
-    { area: 'Accent Usage', detail: 'Strategic color' }
-  ],
-  'spatial-design': [
-    { area: 'Layout Systems', detail: 'Grid & asymmetry' },
-    { area: 'Hierarchy', detail: 'Visual weight' },
-    { area: 'Spacing', detail: 'Rhythm & breath' },
-    { area: 'Composition', detail: 'Balance & tension' }
-  ],
-  'motion-design': [
-    { area: 'Micro-interactions', detail: 'Action feedback' },
-    { area: 'Transitions', detail: 'Smooth changes' },
-    { area: 'Performance', detail: '60fps animations' },
-    { area: 'Choreography', detail: 'Orchestrated reveals' }
-  ],
-  'interaction-design': [
-    { area: 'Affordances', detail: 'Clear cues' },
-    { area: 'Feedback', detail: 'Immediate response' },
-    { area: 'States', detail: 'Hover, focus, etc.' },
-    { area: 'Forgiveness', detail: 'Undo & confirmation' }
-  ],
-  'responsive-design': [
-    { area: 'Fluid Layouts', detail: 'Adapt gracefully' },
-    { area: 'Touch Targets', detail: '44px minimum' },
-    { area: 'Breakpoints', detail: 'Strategic shifts' },
-    { area: 'Performance', detail: 'Mobile optimized' }
-  ],
-  'ux-writing': [
-    { area: 'Clarity', detail: 'Plain language' },
-    { area: 'Conciseness', detail: 'Respect time' },
-    { area: 'Voice & Tone', detail: 'Human & empathetic' },
-    { area: 'Error Messaging', detail: 'Actionable guidance' }
+  'frontend-design': [
+    { area: 'Typography', detail: 'Scale, rhythm, hierarchy, expression' },
+    { area: 'Color & Contrast', detail: 'Accessibility, systems, theming' },
+    { area: 'Spatial Design', detail: 'Layout, spacing, composition' },
+    { area: 'Responsive', detail: 'Fluid layouts, touch targets' },
+    { area: 'Interaction', detail: 'States, feedback, affordances' },
+    { area: 'Motion', detail: 'Micro-interactions, transitions' },
+    { area: 'UX Writing', detail: 'Clarity, voice, error messages' }
   ]
 };
+
+// Reference domains within the frontend-design skill
+export const skillReferenceDomains = [
+  'typography',
+  'color-and-contrast',
+  'spatial-design',
+  'responsive-design',
+  'interaction-design',
+  'motion-design',
+  'ux-writing'
+];
 
 export const commandProcessSteps = {
   'audit': ['Scan', 'Document', 'Prioritize', 'Recommend'],
@@ -93,15 +72,13 @@ export const commandCategories = {
   'onboard': 'system'
 };
 
-// Skill relationships (no longer used in UI, kept for reference)
+// Skill relationships - now consolidated into frontend-design skill
+// The frontend-design skill contains all domains as reference files
 export const skillRelationships = {
-  'typography': { combinesWith: ['spatial-design'] },
-  'color-and-contrast': { combinesWith: ['spatial-design'] },
-  'spatial-design': { combinesWith: ['typography'] },
-  'motion-design': { combinesWith: ['interaction-design'] },
-  'interaction-design': { combinesWith: ['motion-design', 'ux-writing'] },
-  'responsive-design': { combinesWith: ['spatial-design'] },
-  'ux-writing': { combinesWith: ['interaction-design'] }
+  'frontend-design': {
+    description: 'Comprehensive design intelligence with progressive reference loading',
+    referenceDomains: ['typography', 'color-and-contrast', 'spatial-design', 'responsive-design', 'interaction-design', 'motion-design', 'ux-writing']
+  }
 };
 
 export const commandRelationships = {

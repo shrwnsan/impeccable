@@ -1,395 +1,175 @@
-/**
- * Gallery Component - Updated for new skills/commands layouts
- */
+/* Gallery - Renaissance Edition */
 
-/* Skills Navigation - Vertical sidebar */
-.skills-nav {
+.skills-section {
+  position: relative;
+  padding: var(--spacing-xl) 0;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.skills-gallery {
+  display: block; /* Override grid from previous version */
+  position: relative;
+}
+
+/* The horizontal track */
+.gallery-track {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  gap: var(--spacing-lg);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-xl);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  cursor: grab;
 }
 
-.skill-nav-item {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: transparent;
-  border: none;
-  border-left: 2px solid transparent;
-  color: var(--color-ash);
-  font-family: var(--font-body);
-  font-size: 0.9375rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-  text-decoration: none;
-  display: block;
+.gallery-track:active {
+  cursor: grabbing;
 }
 
-.skill-nav-item:hover {
-  color: var(--color-text);
-  background: color-mix(in oklch, var(--color-paper) 85%, var(--color-accent));
+.gallery-track::-webkit-scrollbar {
+  display: none; /* Chrome */
 }
 
-.skill-nav-item.active {
-  color: var(--color-accent);
-  border-left-color: var(--color-accent);
-  background: color-mix(in oklch, var(--color-accent) 5%, var(--color-paper));
-  font-weight: 500;
+/* The Art Frame */
+.gallery-frame {
+  flex: 0 0 80vw;
+  max-width: 1100px;
+  scroll-snap-align: center;
+  position: relative;
+  background: var(--color-paper);
+  border: 1px solid var(--color-mist);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 20px 50px -10px rgba(0, 0, 0, 0.1);
+  border-radius: 2px; /* Sharp, like a frame */
+  overflow: hidden;
+  opacity: 0.4;
+  transform: scale(0.95);
+  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out), box-shadow 0.6s var(--ease-out);
 }
 
-@media (max-width: 968px) {
-  .skills-nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--spacing-xs);
-  }
-  
-  .skill-nav-item {
-    border-left: none;
-    border-bottom: 2px solid transparent;
-    padding: var(--spacing-xs) var(--spacing-md);
-  }
-  
-  .skill-nav-item.active {
-    border-bottom-color: var(--color-accent);
-  }
+/* Active State (Center) */
+.gallery-frame.active {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 40px 100px -20px rgba(0, 0, 0, 0.2);
+  border-color: var(--color-charcoal);
+  border-width: 1px;
 }
 
-/* Skills Showcase - Demo + Info layout */
-.skills-showcase {
+/* Frame Content Layout */
+.gallery-content {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
-  gap: var(--spacing-lg);
-  align-items: start;
-  
-  @media (max-width: 1100px) {
+  height: 600px; /* Fixed height for consistency */
+}
+
+@media (max-width: 900px) {
+  .gallery-frame {
+    flex: 0 0 90vw;
+  }
+  .gallery-content {
     grid-template-columns: 1fr;
+    height: auto;
+    min-height: 600px;
   }
 }
 
-.skills-showcase .loading {
-  grid-column: 1 / -1;
-  min-height: 300px;
+/* Visual Side (Demo) */
+.gallery-visual {
+  background: var(--color-cream);
+  border-right: 1px solid var(--color-mist);
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: var(--spacing-lg);
 }
 
-/* Skill Demo Area */
-.skill-demo-area {
-  /* Demo container */
-}
-
-/* Skill Info Panel */
-.skill-info-panel {
-  /* Info panel */
-}
-
-.skill-header {
-  margin-bottom: var(--spacing-md);
-}
-
-.skill-header h3 {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 300;
-  font-style: italic;
-  margin: 0 0 var(--spacing-xs) 0;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-
-.skill-header .meta {
+/* Info Side */
+.gallery-info {
+  padding: var(--spacing-xl);
   display: flex;
-  gap: var(--spacing-sm);
-  align-items: center;
-  color: var(--color-ash);
-  font-size: 0.8125rem;
-  font-weight: 400;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
-.skill-header .meta a {
-  color: var(--color-accent);
-  text-decoration: none;
-  transition: opacity 0.2s ease;
-}
-
-.skill-header .meta a:hover {
-  opacity: 0.7;
-}
-
-.skill-description {
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  margin-bottom: var(--spacing-md);
-  color: var(--color-charcoal);
-  max-width: 50ch;
-}
-
-/* Skill Sections (Focus Areas, Relationships) */
-.skill-section {
+.gallery-header {
   margin-bottom: var(--spacing-lg);
 }
 
-.skill-section h4 {
-  font-family: var(--font-body);
+.gallery-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-style: italic;
+  margin: 0 0 var(--spacing-xs);
+  color: var(--color-ink);
+}
+
+.gallery-meta {
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
-  margin: 0 0 var(--spacing-sm) 0;
-  color: var(--color-ash);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-}
-
-/* Focus Areas - Compact list */
-.focus-areas-compact {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs);
-}
-
-.focus-area-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--color-paper);
-  border-radius: 3px;
-  font-size: 0.8125rem;
-}
-
-.focus-area-tag strong {
-  color: var(--color-text);
-  font-weight: 500;
-}
-
-.focus-area-tag span {
   color: var(--color-ash);
-  font-size: 0.75rem;
 }
 
-/* Relationship Tags */
-.relationship-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs);
-}
-
-.relationship-tag {
-  display: inline-block;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--color-paper);
-  color: var(--color-text);
-  border: 1px solid color-mix(in oklch, var(--color-accent) 30%, transparent);
-  font-size: 0.8125rem;
-  font-weight: 400;
-  border-radius: 2px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.relationship-tag:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  background: color-mix(in oklch, var(--color-accent) 5%, var(--color-paper));
-}
-
-/* Skill Downloads (Icons) */
-.skill-downloads {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding-top: var(--spacing-md);
-  margin-top: var(--spacing-md);
-  border-top: 1px solid var(--color-mist);
-}
-
-.downloads-label {
-  font-size: 0.75rem;
-  color: var(--color-ash);
-  margin-right: var(--spacing-xs);
-}
-
-.download-icon {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: 6px 10px;
-  border-radius: 4px;
-  background: transparent;
-  border: 1px solid var(--color-mist);
-  color: var(--color-ash);
-  text-decoration: none;
-  font-size: 0.75rem;
-  transition: all 0.15s ease;
-}
-
-.download-icon svg {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-}
-
-.download-icon:hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-  background: color-mix(in oklch, var(--color-accent) 5%, transparent);
-}
-
-/* Command Detail Panel - mirrors skills showcase */
-.command-detail-panel {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: var(--spacing-lg);
-  align-items: start;
-  
-  @media (max-width: 1100px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.command-demo-area {
-  /* Command before/after demos */
-}
-
-.command-info-area {
-  /* Command info and metadata */
-}
-
-.command-header h3 {
-  font-family: 'Space Grotesk', monospace;
-  font-size: 2rem;
-  font-weight: 500;
-  margin: 0 0 var(--spacing-xs) 0;
-  color: var(--color-text);
-}
-
-.command-header .meta {
-  display: flex;
-  gap: var(--spacing-sm);
-  align-items: center;
-  color: var(--color-ash);
-  font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.command-description {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--color-charcoal);
-  margin-bottom: var(--spacing-lg);
-}
-
-/* Process Steps - Compact */
-.process-steps-compact {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-  counter-reset: step;
-}
-
-.process-step-compact {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--color-paper);
-  border-radius: 3px;
-  font-size: 0.8125rem;
-}
-
-.process-step-compact::before {
-  counter-increment: step;
-  content: counter(step);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  background: var(--color-accent);
-  color: var(--color-paper);
-  border-radius: 50%;
-  font-size: 0.6875rem;
-  font-weight: 600;
-}
-
-
-/* Coming Soon States */
-.skill-nav-item.coming-soon,
-.command-nav-item.coming-soon {
-  opacity: 0.7;
-}
-
-.coming-soon-badge {
-  display: inline-block;
-  font-size: 0.5625rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 2px 5px;
-  background: var(--color-mist);
-  color: var(--color-ash);
-  border-radius: 2px;
-  margin-left: var(--spacing-xs);
-  vertical-align: middle;
-}
-
-.coming-soon-showcase {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: var(--spacing-2xl);
-  min-height: 300px;
-}
-
-.coming-soon-icon {
-  color: var(--color-mist);
-  margin-bottom: var(--spacing-lg);
-}
-
-.coming-soon-showcase h3 {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 300;
-  font-style: italic;
-  margin: 0 0 var(--spacing-sm) 0;
-  color: var(--color-text);
-}
-
-.coming-soon-text {
-  font-size: 1rem;
-  color: var(--color-accent);
-  font-weight: 500;
-  margin-bottom: var(--spacing-md);
-}
-
-.coming-soon-showcase .skill-description {
-  max-width: 50ch;
-  color: var(--color-ash);
-  font-size: 0.9375rem;
+.gallery-desc {
+  font-size: 1.125rem;
   line-height: 1.6;
+  color: var(--color-charcoal);
+  margin-bottom: var(--spacing-xl);
+  max-width: 45ch;
 }
 
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Tags within frame */
+.gallery-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-top: auto;
 }
 
-.skills-showcase,
-.command-detail-panel,
-.coming-soon-showcase {
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.gallery-tag {
+  padding: 6px 12px;
+  border: 1px solid var(--color-mist);
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  color: var(--color-ash);
+}
+
+/* Map Navigation */
+.gallery-map {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: var(--spacing-lg);
+}
+
+.gallery-dot {
+  width: 40px;
+  height: 2px;
+  background: var(--color-mist);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.gallery-dot::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+}
+
+.gallery-dot.active {
+  background: var(--color-accent);
+  height: 4px;
 }

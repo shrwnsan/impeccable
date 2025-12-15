@@ -1,60 +1,59 @@
-// ============================================
-// MAIN APP - Entry point and orchestration
-// ============================================
-
 import {
-	renderWorkflowDiagram,
-	selectCommand,
-} from "./js/commands.js";
-import { renderSkillsNav, selectSkill } from "./js/skills.js";
+	initGlassTerminal,
+	renderTerminalLayout,
+} from "./js/components/glass-terminal.js";
+import { initLensEffect } from "./js/components/lens.js";
+import { initHeroEffect } from "./js/effects/liquid-canvas.js";
+import { initScrollReveal } from "./js/utils/reveal.js";
+import { initScrollIndicator, initSmoothScroll } from "./js/utils/scroll.js";
 
 // ============================================
 // STATE
 // ============================================
 
-let allSkills = [];
 let allCommands = [];
 
 // ============================================
-// INITIALIZATION
+// CONTENT LOADING
 // ============================================
 
 async function loadContent() {
 	try {
-		const [skillsRes, commandsRes] = await Promise.all([
-			fetch("/api/skills"),
+		const [commandsRes, patternsRes] = await Promise.all([
 			fetch("/api/commands"),
+			fetch("/api/patterns"),
 		]);
 
-		allSkills = await skillsRes.json();
 		allCommands = await commandsRes.json();
+		const patternsData = await patternsRes.json();
 
-		// Render skills
-		renderSkillsNav(allSkills, (skill) => selectSkill(skill, allSkills));
+		// Render commands (Glass Terminal)
+		renderTerminalLayout(allCommands);
 
-		// Render commands workflow
-		renderWorkflowDiagram(allCommands, (cmd) =>
-			selectCommand(cmd, allCommands),
-		);
-
-		// Select first items by default
-		if (allSkills.length > 0) selectSkill(allSkills[0], allSkills);
-		if (allCommands.length > 0) selectCommand(allCommands[0], allCommands);
+		// Render patterns and antipatterns
+		renderPatterns(patternsData.patterns, "patterns-grid", "pattern");
+		renderPatterns(patternsData.antipatterns, "antipatterns-grid", "antipattern");
 	} catch (error) {
 		console.error("Failed to load content:", error);
 	}
 }
 
-// ============================================
-// UTILITIES
-// ============================================
+function renderPatterns(categories, containerId, classPrefix) {
+	const container = document.getElementById(containerId);
+	if (!container || !categories) return;
 
-function animateIn() {
-	const elements = document.querySelectorAll("[data-animate]:not(.animated)");
-	elements.forEach((el, i) => {
-		el.style.animationDelay = `${i * 0.05}s`;
-		el.classList.add("animated");
-	});
+	container.innerHTML = categories
+		.map(
+			(category) => `
+		<div class="${classPrefix}-category">
+			<h3 class="${classPrefix}-category-title">${category.name}</h3>
+			<ul class="${classPrefix}-list">
+				${category.items.map((item) => `<li>${item}</li>`).join("")}
+			</ul>
+		</div>
+	`,
+		)
+		.join("");
 }
 
 // ============================================
@@ -74,13 +73,20 @@ document.addEventListener("click", (e) => {
 // STARTUP
 // ============================================
 
-if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", loadContent);
-} else {
+function init() {
+	initSmoothScroll();
+	initScrollIndicator();
+	initHeroEffect();
+	initLensEffect();
+	initScrollReveal();
+	initGlassTerminal();
 	loadContent();
+
+	document.body.classList.add("loaded");
 }
 
-window.addEventListener("load", () => {
-	document.body.classList.add("loaded");
-	animateIn();
-});
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", init);
+} else {
+	init();
+}

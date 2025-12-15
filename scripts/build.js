@@ -12,7 +12,7 @@
 
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { readSourceFiles } from './lib/utils.js';
+import { readSourceFiles, readPatterns } from './lib/utils.js';
 import {
   transformCursor,
   transformClaudeCode,
@@ -31,16 +31,17 @@ const DIST_DIR = path.join(ROOT_DIR, 'dist');
  */
 async function build() {
   console.log('🔨 Building cross-provider design plugins...\n');
-  
+
   // Read source files
   const { commands, skills } = readSourceFiles(ROOT_DIR);
-  console.log(`📖 Read ${commands.length} commands and ${skills.length} skills\n`);
-  
+  const patterns = readPatterns(ROOT_DIR);
+  console.log(`📖 Read ${commands.length} commands, ${skills.length} skills, and ${patterns.patterns.length + patterns.antipatterns.length} pattern categories\n`);
+
   // Transform for each provider
-  transformCursor(commands, skills, DIST_DIR);
-  transformClaudeCode(commands, skills, DIST_DIR);
-  transformGemini(commands, skills, DIST_DIR);
-  transformCodex(commands, skills, DIST_DIR);
+  transformCursor(commands, skills, DIST_DIR, patterns);
+  transformClaudeCode(commands, skills, DIST_DIR, patterns);
+  transformGemini(commands, skills, DIST_DIR, patterns);
+  transformCodex(commands, skills, DIST_DIR, patterns);
   
   // Create ZIP bundles
   await createAllZips(DIST_DIR);

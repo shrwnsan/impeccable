@@ -103,19 +103,21 @@ export function readFilesRecursive(dir, fileList = []) {
 
 /**
  * Read and parse all source files
+ * Supports both:
+ * - Single file skills: source/skills/{name}.md
+ * - Directory skills: source/skills/{name}/SKILL.md + reference/*.md
  */
 export function readSourceFiles(rootDir) {
   const commandsDir = path.join(rootDir, 'source/commands');
   const skillsDir = path.join(rootDir, 'source/skills');
-  
+
   const commandFiles = readFilesRecursive(commandsDir);
-  const skillFiles = readFilesRecursive(skillsDir);
-  
+
   const commands = commandFiles.map(filePath => {
     const content = fs.readFileSync(filePath, 'utf-8');
     const { frontmatter, body } = parseFrontmatter(content);
     const name = path.basename(filePath, '.md');
-    
+
     return {
       name: frontmatter.name || name,
       description: frontmatter.description || '',
@@ -124,21 +126,66 @@ export function readSourceFiles(rootDir) {
       filePath
     };
   });
-  
-  const skills = skillFiles.map(filePath => {
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const { frontmatter, body } = parseFrontmatter(content);
-    const name = path.basename(filePath, '.md');
-    
-    return {
-      name: frontmatter.name || name,
-      description: frontmatter.description || '',
-      license: frontmatter.license || '',
-      body,
-      filePath
-    };
-  });
-  
+
+  // Read skills - handling both file and directory formats
+  const skills = [];
+
+  if (fs.existsSync(skillsDir)) {
+    const entries = fs.readdirSync(skillsDir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const entryPath = path.join(skillsDir, entry.name);
+
+      if (entry.isDirectory()) {
+        // Directory-based skill with potential references
+        const skillMdPath = path.join(entryPath, 'SKILL.md');
+        if (fs.existsSync(skillMdPath)) {
+          const content = fs.readFileSync(skillMdPath, 'utf-8');
+          const { frontmatter, body } = parseFrontmatter(content);
+
+          // Read reference files if they exist
+          const references = [];
+          const referenceDir = path.join(entryPath, 'reference');
+          if (fs.existsSync(referenceDir)) {
+            const refFiles = fs.readdirSync(referenceDir).filter(f => f.endsWith('.md'));
+            for (const refFile of refFiles) {
+              const refPath = path.join(referenceDir, refFile);
+              const refContent = fs.readFileSync(refPath, 'utf-8');
+              references.push({
+                name: path.basename(refFile, '.md'),
+                content: refContent,
+                filePath: refPath
+              });
+            }
+          }
+
+          skills.push({
+            name: frontmatter.name || entry.name,
+            description: frontmatter.description || '',
+            license: frontmatter.license || '',
+            body,
+            filePath: skillMdPath,
+            references
+          });
+        }
+      } else if (entry.name.endsWith('.md')) {
+        // Single file skill (legacy format)
+        const content = fs.readFileSync(entryPath, 'utf-8');
+        const { frontmatter, body } = parseFrontmatter(content);
+        const name = path.basename(entry.name, '.md');
+
+        skills.push({
+          name: frontmatter.name || name,
+          description: frontmatter.description || '',
+          license: frontmatter.license || '',
+          body,
+          filePath: entryPath,
+          references: []
+        });
+      }
+    }
+  }
+
   return { commands, skills };
 }
 
@@ -167,6 +214,87 @@ export function writeFile(filePath, content) {
   const dir = path.dirname(filePath);
   ensureDir(dir);
   fs.writeFileSync(filePath, content, 'utf-8');
+}
+
+/**
+ * Read and parse patterns.md
+ * Returns { patterns: [...], antipatterns: [...], body: string }
+ */
+export function readPatterns(rootDir) {
+  const filePath = path.join(rootDir, 'source/patterns.md');
+
+  if (!fs.existsSync(filePath)) {
+    return { patterns: [], antipatterns: [], body: '' };
+  }
+
+  const content = fs.readFileSync(filePath, 'utf-8');
+
+  // Split frontmatter and body
+  const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
+  const match = content.match(frontmatterRegex);
+
+  if (!match) {
+    return { patterns: [], antipatterns: [], body: content };
+  }
+
+  const [, frontmatterText, body] = match;
+
+  // Parse both patterns and antipatterns sections
+  const patterns = [];
+  const antipatterns = [];
+  const lines = frontmatterText.split('\n');
+  let currentSection = null; // 'patterns' or 'antipatterns'
+  let currentCategory = null;
+  let inItems = false;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    const indent = line.length - line.trimStart().length;
+
+    // Top-level section declaration
+    if (indent === 0 && trimmed === 'patterns:') {
+      currentSection = 'patterns';
+      currentCategory = null;
+      inItems = false;
+      continue;
+    }
+    if (indent === 0 && trimmed === 'antipatterns:') {
+      currentSection = 'antipatterns';
+      currentCategory = null;
+      inItems = false;
+      continue;
+    }
+
+    // New category starts with "- name:"
+    if (trimmed.startsWith('- name:') && currentSection) {
+      currentCategory = {
+        name: trimmed.slice(7).trim(),
+        items: []
+      };
+      if (currentSection === 'patterns') {
+        patterns.push(currentCategory);
+      } else {
+        antipatterns.push(currentCategory);
+      }
+      inItems = false;
+      continue;
+    }
+
+    // Items array declaration
+    if (trimmed === 'items:' && currentCategory) {
+      inItems = true;
+      continue;
+    }
+
+    // Item within items array (indented with "- ")
+    if (trimmed.startsWith('- ') && inItems && currentCategory && indent >= 6) {
+      currentCategory.items.push(trimmed.slice(2).trim());
+    }
+  }
+
+  return { patterns, antipatterns, body: body.trim() };
 }
 
 /**

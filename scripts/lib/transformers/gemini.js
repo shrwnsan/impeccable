@@ -3,39 +3,62 @@ import { cleanDir, ensureDir, writeFile } from '../utils.js';
 
 /**
  * Gemini Transformer (Full Featured - TOML + Modular Skills)
- * 
+ *
  * Commands: Converts to TOML format with {{args}} placeholders
  * Skills: Creates modular files imported via @./GEMINI.{name}.md syntax
+ * Reference files are inlined into the main skill file for Gemini
  */
-export function transformGemini(commands, skills, distDir) {
+export function transformGemini(commands, skills, distDir, patterns = null) {
   const geminiDir = path.join(distDir, 'gemini');
   const commandsDir = path.join(geminiDir, '.gemini/commands');
-  
+
   cleanDir(geminiDir);
   ensureDir(commandsDir);
-  
+
   // Commands: Transform to TOML
   for (const command of commands) {
     // Replace named placeholders with {{args}}
     let prompt = command.body.replace(/\{\{[^}]+\}\}/g, '{{args}}');
-    
+
     const toml = [
       `description = "${command.description.replace(/"/g, '\\"')}"`,
       `prompt = """`,
       prompt,
       `"""`
     ].join('\n');
-    
+
     const outputPath = path.join(commandsDir, `${command.name}.toml`);
     writeFile(outputPath, toml);
   }
-  
-  // Skills: Create modular files
+
+  // Skills: Create modular files (with references inlined)
+  let refCount = 0;
   for (const skill of skills) {
+    let content = skill.body;
+
+    // Merge patterns body into frontend-design skill (before Domain Reference Files section)
+    if (skill.name === 'frontend-design' && patterns && patterns.body) {
+      const insertPoint = content.indexOf('---\n\n## Domain Reference Files');
+      if (insertPoint > -1) {
+        content = content.slice(0, insertPoint) + '\n\n' + patterns.body + '\n\n' + content.slice(insertPoint);
+      } else {
+        content += '\n\n' + patterns.body;
+      }
+    }
+
+    // Inline reference files if they exist
+    if (skill.references && skill.references.length > 0) {
+      const refSections = skill.references.map(ref => {
+        refCount++;
+        return `\n\n---\n\n## Reference: ${ref.name}\n\n${ref.content}`;
+      });
+      content += refSections.join('');
+    }
+
     const outputPath = path.join(geminiDir, `GEMINI.${skill.name}.md`);
-    writeFile(outputPath, skill.body);
+    writeFile(outputPath, content);
   }
-  
+
   // Create main GEMINI.md that imports skill files
   const geminiMd = [
     '# Gemini Context',
@@ -46,7 +69,7 @@ export function transformGemini(commands, skills, distDir) {
     '',
     'Each skill provides deep expertise in its domain. The skills below are automatically imported and will guide your responses:',
     '',
-    ...skills.map(skill => 
+    ...skills.map(skill =>
       `### ${skill.name}\n\n**When to use**: ${skill.description}\n\n@./GEMINI.${skill.name}.md\n`
     ),
     '',
@@ -57,9 +80,10 @@ export function transformGemini(commands, skills, distDir) {
     '3. Multiple skills can be combined when the task requires expertise from different domains',
     '4. Follow the detailed instructions provided in each imported skill file'
   ].join('\n');
-  
+
   writeFile(path.join(geminiDir, 'GEMINI.md'), geminiMd);
-  
-  console.log(`✓ Gemini: ${commands.length} commands (TOML), ${skills.length} skills (modular)`);
+
+  const refInfo = refCount > 0 ? ` (${refCount} refs inlined)` : '';
+  console.log(`✓ Gemini: ${commands.length} commands (TOML), ${skills.length} skills (modular)${refInfo}`);
 }
 
