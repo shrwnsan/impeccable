@@ -11,6 +11,7 @@
  */
 
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { readSourceFiles, readPatterns } from './lib/utils.js';
 import {
@@ -20,6 +21,23 @@ import {
   transformCodex
 } from './lib/transformers/index.js';
 import { createAllZips } from './lib/zip.js';
+
+/**
+ * Copy directory recursively
+ */
+function copyDirSync(src, dest) {
+  fs.mkdirSync(dest, { recursive: true });
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyDirSync(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,7 +63,26 @@ async function build() {
   
   // Create ZIP bundles
   await createAllZips(DIST_DIR);
-  
+
+  // Copy Claude Code output to project's .claude directory for local development
+  const claudeCodeSrc = path.join(DIST_DIR, 'claude-code', '.claude');
+  const claudeCodeDest = path.join(ROOT_DIR, '.claude');
+
+  // Copy commands and skills directories (preserves other files like settings.local.json)
+  const commandsSrc = path.join(claudeCodeSrc, 'commands');
+  const skillsSrc = path.join(claudeCodeSrc, 'skills');
+  const commandsDest = path.join(claudeCodeDest, 'commands');
+  const skillsDest = path.join(claudeCodeDest, 'skills');
+
+  // Remove existing and copy fresh
+  if (fs.existsSync(commandsDest)) fs.rmSync(commandsDest, { recursive: true });
+  if (fs.existsSync(skillsDest)) fs.rmSync(skillsDest, { recursive: true });
+
+  copyDirSync(commandsSrc, commandsDest);
+  copyDirSync(skillsSrc, skillsDest);
+
+  console.log(`📋 Synced to .claude/: commands + skills`);
+
   console.log('\n✨ Build complete!');
 }
 
