@@ -1,6 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "bun run build",
-  "outputDirectory": "build"
+  "outputDirectory": "build",
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": "source/**,dist/**"
+    }
+  }
 }
 
