@@ -21,75 +21,185 @@ Then build a color system that is:
 - Flexible enough for theming and variations
 - Aesthetically cohesive and on-brand
 
-## Color Theory Fundamentals
+## Color Spaces: Use OKLCH
 
-### Color Harmony & Relationships
+**Stop using HSL.** Use OKLCH (or LCH) instead. It's perceptually uniform, meaning equal steps in lightness *look* equal—unlike HSL where 50% lightness in yellow looks bright while 50% in blue looks dark.
 
-[TO BE DEVELOPED: Complementary, analogous, triadic, split-complementary, monochromatic schemes, color wheel navigation]
+```css
+/* OKLCH: lightness (0-100%), chroma (0-0.4+), hue (0-360) */
+--color-primary: oklch(60% 0.15 250);      /* Blue */
+--color-primary-light: oklch(85% 0.08 250); /* Same hue, lighter */
+--color-primary-dark: oklch(35% 0.12 250);  /* Same hue, darker */
+```
 
-### Color Psychology & Meaning
-
-[TO BE DEVELOPED: Emotional associations, cultural considerations, industry conventions, semantic color choices]
-
-### Color Properties
-
-[TO BE DEVELOPED: Hue, saturation, lightness/brightness, HSL vs RGB vs LCH, perceptual uniformity]
+**Key insight**: As you move toward white or black, reduce chroma (saturation). High chroma at extreme lightness looks garish. A light blue at 85% lightness needs ~0.08 chroma, not the 0.15 of your base color.
 
 ## Building Functional Palettes
 
+### The Tinted Neutral Trap
+
+**Pure gray is dead.** Add a subtle hint of your brand hue to all neutrals:
+
+```css
+/* Dead grays */
+--gray-100: oklch(95% 0 0);     /* No personality */
+--gray-900: oklch(15% 0 0);
+
+/* Warm-tinted grays (add brand warmth) */
+--gray-100: oklch(95% 0.01 60);  /* Hint of warmth */
+--gray-900: oklch(15% 0.01 60);
+
+/* Cool-tinted grays (tech, professional) */
+--gray-100: oklch(95% 0.01 250); /* Hint of blue */
+--gray-900: oklch(15% 0.01 250);
+```
+
+The chroma is tiny (0.01) but perceptible. It creates subconscious cohesion between your brand color and your UI.
+
 ### Palette Structure
 
-[TO BE DEVELOPED: Primary/secondary/tertiary, neutral scales (9-11 steps), semantic colors, state colors]
+A complete system needs:
 
-### Generating Color Scales
+| Role | Purpose | Example |
+|------|---------|---------|
+| **Primary** | Brand, CTAs, key actions | 1 color, 3-5 shades |
+| **Neutral** | Text, backgrounds, borders | 9-11 shade scale |
+| **Semantic** | Success, error, warning, info | 4 colors, 2-3 shades each |
+| **Surface** | Cards, modals, overlays | 2-3 elevation levels |
 
-[TO BE DEVELOPED: Lightness curves, saturation shifts, hue rotation, perceptual uniformity, algorithmic generation]
+**Skip secondary/tertiary unless you need them.** Most apps work fine with one accent color. Adding more creates decision fatigue and visual noise.
 
-### The Dominant Color Principle
+### The 60-30-10 Rule (Applied Correctly)
 
-[TO BE DEVELOPED: 60-30-10 rule, accent color strategy, visual weight distribution, avoiding rainbow vomit]
+This rule is about **visual weight**, not pixel count:
+
+- **60%**: Neutral backgrounds, white space, base surfaces
+- **30%**: Secondary colors—text, borders, inactive states
+- **10%**: Accent—CTAs, highlights, focus states
+
+The common mistake: using the accent color everywhere because it's "the brand color." Accent colors work *because* they're rare. Overuse kills their power.
 
 ## Contrast & Accessibility
 
-### WCAG Compliance
+### WCAG Requirements
 
-[TO BE DEVELOPED: AA vs AAA standards, text contrast ratios (4.5:1 / 7:1), UI component contrast (3:1), large text exceptions]
+| Content Type | AA Minimum | AAA Target |
+|--------------|------------|------------|
+| Body text | 4.5:1 | 7:1 |
+| Large text (18px+ or 14px bold) | 3:1 | 4.5:1 |
+| UI components, icons | 3:1 | 4.5:1 |
+| Non-essential decorations | None | None |
 
-### Testing & Tools
+**The gotcha**: Placeholder text still needs 4.5:1. That light gray placeholder you see everywhere? Usually fails WCAG.
 
-[TO BE DEVELOPED: Contrast checkers, automated testing, color blindness simulation, tools for verification]
+### Dangerous Color Combinations
 
-### Accessible Color Combinations
+These commonly fail contrast or cause readability issues:
 
-[TO BE DEVELOPED: Which combinations work, which don't, safe pairings, dangerous pairings, contrast matrices]
+- Light gray text on white (the #1 accessibility fail)
+- **Gray text on any colored background**—gray looks washed out and dead on color. Use a tinted version of the background color instead, or transparency
+- Red text on green background (or vice versa)—8% of men can't distinguish these
+- Blue text on red background (vibrates visually)
+- Yellow text on white (almost always fails)
+- Thin light text on images (unpredictable contrast)
 
-## Theming Architecture
+### Never Use Pure Gray or Pure Black
 
-### Light & Dark Mode
+Pure gray (`oklch(50% 0 0)`) and pure black (`#000`) don't exist in nature—real shadows and surfaces always have a color cast. They look uncanny and lifeless.
 
-[TO BE DEVELOPED: Independent palettes vs inverted, neutral strategies, shadows in dark mode, image handling]
+```css
+/* Dead and artificial */
+--gray: oklch(50% 0 0);
+--black: oklch(0% 0 0);
 
-### CSS Custom Properties
+/* Natural and warm */
+--gray: oklch(50% 0.01 60);     /* Warm gray */
+--black: oklch(12% 0.01 250);   /* Very dark blue-gray */
+```
 
-[TO BE DEVELOPED: Token hierarchy (primitive → semantic → component), naming conventions, theme switching]
+Even a chroma of 0.005-0.01 is enough to feel natural without being obviously tinted.
 
-### Multi-Theme Systems
+### Testing
 
-[TO BE DEVELOPED: Brand themes, user preference themes, contextual themes, theme inheritance]
+Don't trust your eyes. Use tools:
 
-## Advanced Color Techniques
+- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
+- Browser DevTools → Rendering → Emulate vision deficiencies
+- [Polypane](https://polypane.app/) for real-time testing
 
-### Gradients & Effects
+## Theming: Light & Dark Mode
 
-[TO BE DEVELOPED: Mesh gradients, color stops, blend modes, gradient generation, overlay techniques]
+### Dark Mode Is Not Inverted Light Mode
 
-### Transparency & Alpha
+You can't just swap colors. Dark mode requires different design decisions:
 
-[TO BE DEVELOPED: Alpha channels, overlay strategies, transparency scales, backdrop effects]
+| Light Mode | Dark Mode |
+|------------|-----------|
+| Shadows for depth | Lighter surfaces for depth (no shadows) |
+| Dark text on light | Light text on dark (reduce font weight) |
+| Vibrant accents | Desaturate accents slightly |
+| White backgrounds | Never pure black—use dark gray (oklch 12-18%) |
 
-### Dynamic Color
+```css
+/* Dark mode depth via surface color, not shadow */
+:root[data-theme="dark"] {
+  --surface-1: oklch(15% 0.01 250);
+  --surface-2: oklch(20% 0.01 250);  /* "Higher" = lighter */
+  --surface-3: oklch(25% 0.01 250);
 
-[TO BE DEVELOPED: State-based color changes, hover darkening/lightening, interactive color feedback]
+  /* Reduce text weight slightly */
+  --body-weight: 350;  /* Instead of 400 */
+}
+```
+
+### Token Hierarchy
+
+Use two layers of abstraction:
+
+```css
+/* Layer 1: Primitive tokens (rarely use directly) */
+--blue-500: oklch(55% 0.2 250);
+--blue-600: oklch(45% 0.2 250);
+
+/* Layer 2: Semantic tokens (use these) */
+--color-primary: var(--blue-500);
+--color-primary-hover: var(--blue-600);
+--color-text: var(--gray-900);
+--color-text-muted: var(--gray-600);
+--color-border: var(--gray-200);
+--color-surface: var(--white);
+```
+
+**For dark mode, only redefine the semantic layer:**
+
+```css
+:root[data-theme="dark"] {
+  --color-primary: var(--blue-400);  /* Lighter in dark mode */
+  --color-text: var(--gray-100);
+  --color-surface: var(--gray-900);
+}
+```
+
+## Alpha Is A Design Smell
+
+If you're using lots of transparency (rgba, hsla), your palette is probably incomplete. Alpha creates:
+- Unpredictable contrast (depends on what's behind it)
+- Performance overhead (compositing)
+- Inconsistency across contexts
+
+**Instead**: Define explicit overlay colors:
+
+```css
+/* Bad: unpredictable */
+--overlay: rgba(0, 0, 0, 0.5);
+
+/* Good: explicit colors for each context */
+--overlay-on-light: oklch(40% 0 0);
+--overlay-on-dark: oklch(70% 0 0);
+--overlay-on-image: oklch(20% 0 0 / 60%);  /* Alpha only when necessary */
+```
+
+The exception: Focus rings and interactive states where you need to see through to the element beneath.
 
 ---
 

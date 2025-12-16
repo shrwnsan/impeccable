@@ -23,119 +23,237 @@ Then build responsive systems that are:
 - Performant on constrained devices
 - Contextually appropriate
 
-## Mobile-First Methodology
+## Mobile-First: Write It Right
 
-### Why Mobile-First
+Start with base styles for mobile, then layer complexity:
 
-[TO BE DEVELOPED: Progressive enhancement, performance benefits, forces priority decisions, mobile usage dominance]
+```css
+/* Base: mobile */
+.nav {
+  display: flex;
+  flex-direction: column;
+}
 
-### Mobile-First Implementation
+/* Enhancement: tablet and up */
+@media (min-width: 768px) {
+  .nav {
+    flex-direction: row;
+  }
+}
+```
 
-[TO BE DEVELOPED: Start with mobile styles, add complexity with min-width media queries, content-first approach]
+**The mistake**: Writing desktop-first (max-width queries) means mobile loads desktop styles first, then overrides. Wasteful and error-prone.
 
-## Breakpoint Strategies
+## Breakpoints: Content-Driven, Not Device-Driven
 
-### Choosing Breakpoints
+**Don't chase device sizes.** iPhones change, Android varies wildly, tablets overlap with laptops. Instead, let content tell you where to break:
 
-[TO BE DEVELOPED: Content-driven vs device-driven, common breakpoint values, in-between states, avoiding too many breakpoints]
+1. Start narrow
+2. Stretch the viewport until the design breaks
+3. Add a breakpoint there
 
-### Breakpoint Architecture
+Common content-driven breakpoints (as starting points):
 
-[TO BE DEVELOPED: Named breakpoints, breakpoint tokens, consistent usage across codebase]
+```css
+:root {
+  --bp-sm: 640px;   /* Larger phones, small content changes */
+  --bp-md: 768px;   /* Tablets, significant reflow */
+  --bp-lg: 1024px;  /* Laptops, multi-column */
+  --bp-xl: 1280px;  /* Desktops, max content width */
+}
+```
 
-## Fluid & Adaptive Design
+**Three breakpoints usually suffice.** If you have more than five, you're probably over-engineering.
 
-### Fluid Typography
+## Fluid Design: The Clamp Formula
 
-[TO BE DEVELOPED: clamp(), viewport units, fluid type scales, maintaining readability]
+`clamp(min, preferred, max)` creates fluid values without media queries.
+
+### The Formula
+
+```css
+/* Font size: 16px min, scales with viewport, 24px max */
+font-size: clamp(1rem, 0.5rem + 2vw, 1.5rem);
+```
+
+**How to calculate the preferred value**: The middle value determines the scaling rate. Higher vw coefficient = faster scaling:
+
+- `1vw` = gentle scaling
+- `2-3vw` = moderate scaling
+- `4vw+` = aggressive scaling
+
+Add a rem offset to shift the baseline: `0.5rem + 2vw` ensures it doesn't collapse to 0 on small screens.
 
 ### Fluid Spacing
 
-[TO BE DEVELOPED: Responsive spacing scales, container-relative spacing, clamp() for margins/padding]
+```css
+:root {
+  --space-lg: clamp(2rem, 1rem + 3vw, 4rem);
+  --container-padding: clamp(1rem, 5vw, 4rem);
+}
+```
 
-### Fluid Layouts
+This creates breathing room that naturally expands on larger screens.
 
-[TO BE DEVELOPED: CSS Grid auto-fit/auto-fill, flexible columns, aspect-ratio, fluid containers]
+## Detect Input Method, Not Just Screen Size
 
-### Container Queries
+**Screen size doesn't tell you input method.** A laptop with touchscreen, a tablet with keyboard—use pointer and hover queries:
 
-[TO BE DEVELOPED: Component-level responsiveness, when to use vs media queries, polyfills]
+```css
+/* Fine pointer (mouse, trackpad) */
+@media (pointer: fine) {
+  .button { padding: 8px 16px; }
+}
+
+/* Coarse pointer (touch, stylus) */
+@media (pointer: coarse) {
+  .button { padding: 12px 20px; }  /* Larger touch target */
+}
+
+/* Device supports hover */
+@media (hover: hover) {
+  .card:hover { transform: translateY(-2px); }
+}
+
+/* Device doesn't support hover (touch) */
+@media (hover: none) {
+  .card { /* No hover state - use active instead */ }
+}
+```
+
+**Critical**: Don't rely on hover for functionality. Touch users can't hover.
+
+## Safe Areas: Handle the Notch
+
+Modern phones have notches, rounded corners, and home indicators. Use `env()`:
+
+```css
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* With fallback */
+.footer {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+```
+
+**Enable viewport-fit** in your meta tag:
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+```
+
+## Responsive Images: Get It Right
+
+### srcset with Width Descriptors
+
+```html
+<img
+  src="hero-800.jpg"
+  srcset="
+    hero-400.jpg 400w,
+    hero-800.jpg 800w,
+    hero-1200.jpg 1200w
+  "
+  sizes="(max-width: 768px) 100vw, 50vw"
+  alt="Hero image"
+>
+```
+
+**How it works**:
+- `srcset` lists available images with their actual widths (`w` descriptors)
+- `sizes` tells the browser how wide the image will display
+- Browser picks the best file based on viewport width AND device pixel ratio
+
+### Picture Element for Art Direction
+
+When you need different crops/compositions (not just resolutions):
+
+```html
+<picture>
+  <source media="(min-width: 768px)" srcset="wide.jpg">
+  <source media="(max-width: 767px)" srcset="tall.jpg">
+  <img src="fallback.jpg" alt="...">
+</picture>
+```
 
 ## Layout Adaptation Patterns
 
-### Navigation Patterns
+### Navigation: The Three-Stage Pattern
 
-[TO BE DEVELOPED: Mobile hamburger/drawer, tablet side panel, desktop persistent nav, bottom nav bars]
+```css
+/* Mobile: hamburger icon + drawer */
+.nav-menu { display: none; }
+.nav-toggle { display: block; }
 
-### Content Reflow
+/* Tablet: horizontal but compact */
+@media (min-width: 768px) {
+  .nav-menu { display: flex; }
+  .nav-toggle { display: none; }
+}
 
-[TO BE DEVELOPED: Single column → multi-column, stacking orders, priority content first]
+/* Desktop: full navigation with labels */
+@media (min-width: 1024px) {
+  .nav-item-label { display: inline; }
+}
+```
 
-### Component Adaptation
+### Table to Cards
 
-[TO BE DEVELOPED: Tabs → accordion, horizontal → vertical, show/hide patterns, progressive disclosure]
+Tables work on desktop, fail on mobile. Transform:
 
-## Touch vs Pointer Optimization
+```css
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
 
-### Touch Target Sizing
+  thead { display: none; }  /* Hide headers */
 
-[TO BE DEVELOPED: 44x44px minimum, spacing between targets, thumb zones, edge cases]
+  tr {
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    padding: 1rem;
+  }
 
-### Touch-Specific Interactions
+  td::before {
+    content: attr(data-label);  /* Add labels via data attribute */
+    font-weight: 600;
+    display: block;
+  }
+}
+```
 
-[TO BE DEVELOPED: Swipe gestures, pull-to-refresh, long press, avoiding hover-dependent patterns]
+### Progressive Disclosure
 
-### Hybrid Devices
+Not everything needs to show on mobile:
 
-[TO BE DEVELOPED: Supporting both touch and pointer, feature detection, adaptive interfaces]
+```css
+/* Show summary on mobile */
+.details-content { display: none; }
 
-## Viewport & Screen Considerations
+@media (min-width: 768px) {
+  /* Expand on desktop */
+  .details-content { display: block; }
+}
+```
 
-### Viewport Meta Tag
+Combine with `<details>/<summary>` for interactive expansion on mobile.
 
-[TO BE DEVELOPED: Proper viewport configuration, zoom control, initial scale]
+## Testing: Don't Trust DevTools Alone
 
-### Safe Areas
+DevTools device emulation is useful for layout but misses:
 
-[TO BE DEVELOPED: iPhone notch, rounded corners, system UI insets, padding for safe areas]
+- Actual touch interactions
+- Real CPU/memory constraints
+- Network latency patterns
+- Font rendering differences
+- Browser chrome/keyboard appearances
 
-### Orientation Handling
-
-[TO BE DEVELOPED: Portrait vs landscape, orientation-specific layouts, testing both orientations]
-
-### High-DPI Screens
-
-[TO BE DEVELOPED: Retina images, 2x/3x assets, SVG for icons, responsive images]
-
-## Responsive Images & Media
-
-### Responsive Images
-
-[TO BE DEVELOPED: srcset, sizes, picture element, art direction, lazy loading]
-
-### Video Adaptation
-
-[TO BE DEVELOPED: Responsive video embeds, bandwidth considerations, poster images]
-
-## Performance on Mobile
-
-### Mobile Performance Budget
-
-[TO BE DEVELOPED: Constrained CPU/memory, slow connections, battery concerns]
-
-### Loading Strategies
-
-[TO BE DEVELOPED: Critical path optimization, lazy loading, code splitting for mobile]
-
-## Testing Strategies
-
-### Device Testing
-
-[TO BE DEVELOPED: Real device testing, browser DevTools, emulators, viewport testing]
-
-### Testing Checklist
-
-[TO BE DEVELOPED: Different viewports, orientations, input methods, connection speeds]
+**Test on at least**: One real iPhone, one real Android, a tablet if relevant. Cheap Android phones reveal performance issues you'll never see on simulators.
 
 ---
 

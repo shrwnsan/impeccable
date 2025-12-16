@@ -54,7 +54,7 @@ antipatterns:
     items:
       - Don't use gray text on colored backgrounds
       - Don't rely on color alone to convey information
-      - Don't use pure black (#000) or white (#fff) for large areas
+      - Don't use pure gray, pure black (#000), or pure white (#fff) - add subtle color tint
       - Don't create palettes with arbitrary color choices
       - Don't ignore color blindness (8% of men)
   - name: Layout & Space
@@ -68,16 +68,16 @@ antipatterns:
     items:
       - Don't animate without purpose
       - Don't use durations over 500ms for UI feedback
-      - Don't animate layout properties (width, height, padding, margin) - they trigger reflows and can cause text wrapping mid-animation; use transform instead
+      - Don't animate layout properties (width, height, padding, margin) - use transform instead
+      - Don't use bounce or elastic easing - they feel dated and tacky; use ease-out-quart/quint/expo
       - Don't ignore prefers-reduced-motion
-      - Don't use animation to hide slow loading
   - name: Interaction
     items:
       - Don't remove focus indicators without alternatives
       - Don't use placeholder text as labels
       - Don't make touch targets smaller than 44×44px
       - Don't show generic error messages
-      - Don't design only for mouse/pointer
+      - Don't repeat the same information (redundant headers, intro restating heading, etc.)
   - name: Responsive
     items:
       - Don't design desktop-first and cram into mobile
@@ -101,7 +101,7 @@ Focus on intentional, distinctive design choices:
 
 **Space**: Use a spacing scale (4, 8, 12, 16, 24, 32, 48, 64, 96). Create visual rhythm through varied spacing. Let content breathe. Break the grid intentionally.
 
-**Motion**: Animate with purpose—guide attention and confirm actions. Use 150-300ms for micro-interactions. Prefer transform and opacity. Stagger reveals for orchestrated page loads.
+**Motion**: Animate with purpose—guide attention and confirm actions. Use 150-300ms for micro-interactions. Prefer transform and opacity with smooth ease-out curves (quart, quint, expo). Stagger reveals for orchestrated page loads.
 
 **Interaction**: Design clear focus indicators. Make touch targets 44×44px minimum. Provide immediate feedback. Write specific, helpful error messages.
 
@@ -111,11 +111,13 @@ Focus on intentional, distinctive design choices:
 
 These patterns create generic "AI slop" aesthetics:
 
-**Generic Visuals**: Defaulting to Inter/Roboto/Arial, purple-to-blue gradients on white, wrapping everything in rounded cards, decorative shadows without purpose.
+**Generic Visuals**: Defaulting to Inter/Roboto/Arial, purple-to-blue gradients on white, pure grays without color tint, wrapping everything in rounded cards, decorative shadows without purpose.
 
-**Structural Issues**: Arbitrary spacing without a scale, hierarchy through size alone, equal spacing everywhere, cards nested inside cards.
+**Structural Issues**: Arbitrary spacing without a scale, hierarchy through size alone, equal spacing everywhere, cards nested inside cards, redundant copy (headers restating intros, repeated explanations).
 
-**Interaction Failures**: Removing focus outlines without alternatives, placeholder text as labels, touch targets under 44×44px, generic "Something went wrong" errors.
+**Motion Mistakes**: Bounce and elastic easing (dated and tacky), animating layout properties, durations over 500ms for feedback, animation without purpose.
+
+**Interaction Failures**: Removing focus outlines without alternatives, placeholder text as labels, touch targets under 44×44px, generic "Something went wrong" errors, gray text on colored backgrounds.
 
 **Accessibility Violations**: Color-only meaning, ignoring prefers-reduced-motion, failing WCAG contrast, creating keyboard traps.
 

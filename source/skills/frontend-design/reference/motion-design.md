@@ -21,75 +21,193 @@ Then implement motion that is:
 - Accessible with reduced motion alternatives
 - Choreographed with thoughtful timing and sequencing
 
-## Classic Animation Principles
+## Duration: The 100/300/500 Rule
 
-### Disney's 12 Principles (Web Context)
+Timing matters more than easing. These durations feel right for most UI:
 
-[TO BE DEVELOPED: Squash and stretch, anticipation, staging, follow-through, ease-in/ease-out, arcs, secondary action, timing, exaggeration, solid drawing, appeal - adapted for UI]
+| Duration | Use Case | Examples |
+|----------|----------|----------|
+| **100-150ms** | Instant feedback | Button press, toggle, color change |
+| **200-300ms** | State changes | Menu open, tooltip, hover states |
+| **300-500ms** | Layout changes | Accordion, modal, drawer |
+| **500-800ms** | Entrance animations | Page load, hero reveals |
 
-### Timing & Duration
+**Exit animations are faster than entrances.** Users want to see what's leaving—quickly. Use ~75% of the enter duration:
+```css
+.modal {
+  --enter: 400ms;
+  --exit: 300ms;
+}
+```
 
-[TO BE DEVELOPED: Micro-interactions (100-300ms), transitions (300-500ms), complex animations (500-1000ms), duration by distance, perceived speed]
+## Easing: Pick the Right Curve
 
-### Easing & Curves
+**Don't use `ease`.** It's a compromise that's rarely optimal. Instead:
 
-[TO BE DEVELOPED: Linear vs eased, ease-out (enter), ease-in (exit), ease-in-out (full cycle), custom cubic-bezier, spring physics]
+| Curve | Use For | CSS |
+|-------|---------|-----|
+| **ease-out** | Elements entering | `cubic-bezier(0.16, 1, 0.3, 1)` |
+| **ease-in** | Elements leaving | `cubic-bezier(0.7, 0, 0.84, 0)` |
+| **ease-in-out** | State toggles (there → back) | `cubic-bezier(0.65, 0, 0.35, 1)` |
 
-## Types of UI Animation
+**For micro-interactions, use exponential curves**—they feel natural because they mimic real physics (friction, deceleration):
 
-### Micro-interactions
+```css
+/* Quart out - smooth, refined (recommended default) */
+--ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 
-[TO BE DEVELOPED: Button feedback, hover states, toggle switches, like buttons, form validation feedback, loading indicators]
+/* Quint out - slightly more dramatic */
+--ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 
-### Page Transitions
+/* Expo out - snappy, confident */
+--ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+```
 
-[TO BE DEVELOPED: Route transitions, modal entry/exit, drawer animations, cross-fade, slide, zoom patterns]
+**Avoid bounce and elastic curves.** They were trendy in 2015 but now feel tacky and amateurish. Real objects don't bounce when they stop—they decelerate smoothly. Overshoot effects draw attention to the animation itself rather than the content.
 
-### State Transitions
+## The Only Two Properties You Should Animate
 
-[TO BE DEVELOPED: Loading → success → error flows, expand/collapse, show/hide, enable/disable state changes]
+**transform** and **opacity**. That's it. Everything else causes layout recalculation or repaints:
 
-### Scrolling & Parallax
+```css
+/* Good: GPU-accelerated, smooth */
+.slide-in {
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform 300ms ease-out, opacity 300ms ease-out;
+}
+.slide-in.hidden {
+  transform: translateX(20px);
+  opacity: 0;
+}
 
-[TO BE DEVELOPED: Scroll-triggered animations, reveal on scroll, parallax layers, scroll-linked effects, intersection observer]
+/* Bad: triggers layout, janky */
+.slide-in {
+  left: 0;  /* Layout thrashing */
+  height: 100%;  /* Expensive */
+}
+```
 
-## Choreography & Sequencing
+**Exceptions**: Sometimes you must animate `height` for accordions. Use `max-height` with a value larger than content, or better yet, use CSS Grid's `grid-template-rows: 0fr → 1fr` trick.
 
-### Staggered Animations
+## Staggered Animations
 
-[TO BE DEVELOPED: animation-delay patterns, sequential reveals, cascade effects, list item staggering]
+Staggering creates rhythm and direction. The formula:
 
-### Orchestrated Page Loads
+```css
+.list-item {
+  animation: fade-in 400ms ease-out both;
+}
 
-[TO BE DEVELOPED: Entry choreography, hero → content → details, creating narrative through sequence, attention management]
+/* Stagger each item by 50ms */
+.list-item:nth-child(1) { animation-delay: 0ms; }
+.list-item:nth-child(2) { animation-delay: 50ms; }
+.list-item:nth-child(3) { animation-delay: 100ms; }
+/* ... */
+```
 
-### Exit Choreography
+**Better approach with CSS custom property:**
 
-[TO BE DEVELOPED: Reverse sequences, intentional exit timing, maintaining spatial relationships during exit]
+```css
+.list-item {
+  animation: fade-in 400ms ease-out both;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+```
+```html
+<li class="list-item" style="--i: 0">First</li>
+<li class="list-item" style="--i: 1">Second</li>
+<li class="list-item" style="--i: 2">Third</li>
+```
 
-## Technical Implementation
+**Key insight**: Cap the total stagger time. 10 items at 50ms = 500ms before the last item appears. If you have 50 items, reduce to 20ms per item or cap at ~10 staggered items.
 
-### CSS-Only Animation
+## Reduced Motion
 
-[TO BE DEVELOPED: @keyframes, animation properties, transitions, transform, pseudo-element animations, hardware acceleration]
+This is not optional. Vestibular disorders affect ~35% of adults over 40.
 
-### JavaScript Animation
+```css
+/* Define animations normally */
+.card {
+  animation: slide-up 500ms ease-out;
+}
 
-[TO BE DEVELOPED: Web Animations API, requestAnimationFrame, animation libraries (GSAP, Framer Motion, Motion One)]
+/* Provide alternative for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: fade-in 200ms ease-out;  /* Crossfade instead of motion */
+  }
+}
 
-### Performance Optimization
+/* Or disable entirely */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
 
-[TO BE DEVELOPED: GPU acceleration (transform, opacity only), will-change, avoiding layout thrashing, reducing paint, FPS monitoring]
+**What to preserve**: Functional animations like progress bars, loading spinners (slowed down), and focus indicators should still work—just without spatial movement.
 
-## Motion Design Systems
+## Performance: Avoid These Mistakes
 
-### Motion Tokens
+### Don't Use will-change Preemptively
 
-[TO BE DEVELOPED: Duration scales, easing tokens, named animations, consistent motion vocabulary]
+```css
+/* Bad: wastes GPU memory */
+.card { will-change: transform; }
 
-### Reduced Motion
+/* Good: only when animation is imminent */
+.card:hover { will-change: transform; }
+.card.animating { will-change: transform; }
+```
 
-[TO BE DEVELOPED: prefers-reduced-motion, graceful degradation, essential vs decorative animation, crossfade alternatives]
+`will-change` forces the browser to create a compositing layer. Used everywhere = memory bloat.
+
+### Don't Animate During Scroll
+
+Scroll-linked animations (parallax, reveal) are expensive. If you must:
+
+```javascript
+// Use Intersection Observer, not scroll events
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target); // Animate once, then stop observing
+    }
+  });
+}, { threshold: 0.2 });
+```
+
+### Don't Fight the Main Thread
+
+Heavy JavaScript animations block rendering. For complex choreography, use the Web Animations API or a library like Motion One that schedules efficiently.
+
+## Motion Tokens
+
+Create a system for consistency:
+
+```css
+:root {
+  /* Durations */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* Easings */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Common patterns */
+  --transition-fade: opacity var(--duration-fast) var(--ease-out);
+  --transition-slide: transform var(--duration-normal) var(--ease-out);
+  --transition-all: var(--duration-normal) var(--ease-out);
+}
+```
 
 ---
 

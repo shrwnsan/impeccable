@@ -21,115 +21,240 @@ Then implement interactions that are:
 - Forgiving with error prevention and recovery
 - Responsive with immediate feedback and state changes
 
-## Interaction States
+## The Eight Interactive States
 
-### Core States
+Every interactive element needs these states designed:
 
-[TO BE DEVELOPED: Default, hover, focus, active, disabled, loading, error, success - visual treatment for each]
+| State | When | Visual Treatment |
+|-------|------|------------------|
+| **Default** | At rest | Base styling |
+| **Hover** | Pointer over (not touch) | Subtle lift, color shift |
+| **Focus** | Keyboard/programmatic focus | Visible ring (see below) |
+| **Active** | Being pressed | Pressed in, darker |
+| **Disabled** | Not interactive | Reduced opacity, no pointer |
+| **Loading** | Processing | Spinner, skeleton |
+| **Error** | Invalid state | Red border, icon, message |
+| **Success** | Completed | Green check, confirmation |
 
-### State Transitions
+**The common miss**: Designing hover without focus, or vice versa. They're different. Keyboard users never see hover states.
 
-[TO BE DEVELOPED: Smooth state changes, animation between states, maintaining context, preserving user intent]
+## Focus Rings: Do Them Right
 
-### Loading & Progress States
+**Never `outline: none` without replacement.** It's an accessibility violation. Instead, use `:focus-visible` to show focus only for keyboard users:
 
-[TO BE DEVELOPED: Skeleton screens, spinners, progress bars, optimistic updates, what to show while waiting]
+```css
+/* Hide focus ring for mouse/touch */
+button:focus {
+  outline: none;
+}
 
-## Affordances & Feedback
+/* Show focus ring for keyboard */
+button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+```
 
-### Visual Affordances
+**Focus ring design**:
+- High contrast (3:1 minimum against adjacent colors)
+- 2-3px thick
+- Offset from element (not inside it)
+- Consistent across all interactive elements
 
-[TO BE DEVELOPED: Signaling interactivity, button appearance, link styling, cursor changes, touch target highlighting]
+## Form Design: The Non-Obvious
 
-### Immediate Feedback
+### Don't Use Placeholders as Labels
 
-[TO BE DEVELOPED: Click/tap acknowledgment, hover feedback, focus indication, "something is happening" signals]
+Placeholders disappear when you type. Users forget what the field was for. Screen readers may not announce them.
 
-### Haptic & Sound Feedback
+```html
+<!-- Bad -->
+<input placeholder="Email address">
 
-[TO BE DEVELOPED: Vibration patterns, sound cues, cross-modal feedback, when to use non-visual feedback]
+<!-- Good -->
+<label for="email">Email address</label>
+<input id="email" type="email" placeholder="name@example.com">
+```
 
-## Form Design & Input Patterns
+Use placeholders only for examples or format hints, never as the primary label.
 
-### Form Layout & Structure
+### Validate on Blur, Not on Input
 
-[TO BE DEVELOPED: Single column vs multi-column, label placement, field grouping, visual hierarchy in forms]
+Real-time validation (validating every keystroke) is annoying. Users can't finish typing before seeing errors.
 
-### Input Field Design
+```javascript
+// Bad: fires on every keystroke
+input.addEventListener('input', validate);
 
-[TO BE DEVELOPED: Field sizing, placeholder usage (anti-pattern), helper text, character limits, input masking]
+// Good: fires when user leaves field
+input.addEventListener('blur', validate);
 
-### Validation Patterns
+// Exception: password strength (show progress while typing)
+passwordInput.addEventListener('input', showStrength);
+```
 
-[TO BE DEVELOPED: Inline vs on-submit, real-time validation, error message writing, success confirmation, required field indication]
+### Error Message Placement
 
-### Complex Input Types
+Place errors **below** the field (users scan top-down), not above. Keep messages close to the field—not in a summary at the top unless also repeated inline.
 
-[TO BE DEVELOPED: File upload UX, date pickers, time selection, rich text editing, multi-select, autocomplete, search]
+```html
+<label for="email">Email</label>
+<input id="email" type="email" aria-describedby="email-error">
+<span id="email-error" class="error">Please enter a valid email</span>
+```
 
-### Progressive Disclosure in Forms
+The `aria-describedby` connects the error to the input for screen readers.
 
-[TO BE DEVELOPED: Conditional fields, wizards/multi-step forms, accordions, showing complexity gradually]
+## Loading States: Optimistic Updates
 
-### Form Error Handling
+**Show success immediately, handle failure gracefully.** Users perceive the app as faster.
 
-[TO BE DEVELOPED: Error prevention (constraints, masks), clear error messages, error recovery, field-level vs form-level errors]
+```javascript
+// Optimistic update pattern
+async function toggleLike() {
+  // 1. Update UI immediately
+  setLiked(true);
 
-## Touch & Pointer Interactions
+  try {
+    // 2. Send request
+    await api.like(postId);
+  } catch {
+    // 3. Rollback on failure
+    setLiked(false);
+    showToast('Like failed. Please try again.');
+  }
+}
+```
 
-### Touch Targets
+**When to use**: Low-stakes actions (likes, follows, small edits). **Not for**: Payments, destructive actions, critical data changes.
 
-[TO BE DEVELOPED: 44x44px minimum, spacing between targets, thumb zones, edge reach areas on mobile]
+### Skeleton Screens > Spinners
 
-### Touch vs Pointer Patterns
+Spinners say "something is happening" but give no sense of what or how long. Skeletons preview the content shape:
 
-[TO BE DEVELOPED: Hover states on touch (problems), tap feedback, long press, swipe gestures, pinch-to-zoom]
+```css
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--gray-200) 25%,
+    var(--gray-100) 50%,
+    var(--gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
 
-### Gesture Design
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+```
 
-[TO BE DEVELOPED: Swipe to delete, pull to refresh, drag to reorder, custom gestures, gesture discoverability]
+## Modals: The Inert Approach
 
-## Keyboard Navigation
+Focus trapping in modals used to require complex JavaScript. Now use the `inert` attribute:
 
-### Focus Management
+```html
+<!-- When modal is open -->
+<main inert>
+  <!-- Content behind modal can't be focused or clicked -->
+</main>
+<dialog open>
+  <h2>Modal Title</h2>
+  <!-- Focus stays inside modal -->
+</dialog>
+```
 
-[TO BE DEVELOPED: Focus rings (never remove without replacement), logical tab order, skip links, focus trapping in modals]
+Or use the native `<dialog>` element:
 
-### Keyboard Shortcuts
+```javascript
+const dialog = document.querySelector('dialog');
+dialog.showModal();  // Opens with focus trap, closes on Escape
+```
 
-[TO BE DEVELOPED: Common shortcuts, discoverability, avoiding conflicts, command palettes, keyboard-first workflows]
+## The Popover API
 
-### Accessible Interaction Patterns
+For tooltips, dropdowns, and non-modal overlays, use native popovers:
 
-[TO BE DEVELOPED: ARIA roles for custom controls, managing focus in dynamic content, screen reader announcements]
+```html
+<button popovertarget="menu">Open menu</button>
+<div id="menu" popover>
+  <button>Option 1</button>
+  <button>Option 2</button>
+</div>
+```
 
-## Navigation Patterns
+**Benefits**: Light-dismiss (click outside closes), proper stacking, no z-index wars, accessible by default.
 
-### Menu & Navigation Design
+## Destructive Actions: Undo > Confirm
 
-[TO BE DEVELOPED: Mega menus, hamburger menus, breadcrumbs, tabs, pagination, infinite scroll vs load more]
+Confirmation dialogs are friction. Users click through them mindlessly. **Undo is better**:
 
-### Modal & Dialog Patterns
+```javascript
+async function deleteItem(id) {
+  // 1. Remove from UI immediately
+  hideItem(id);
 
-[TO BE DEVELOPED: Modal entry/exit, focus management, escape to close, backdrop click behavior, sheet patterns]
+  // 2. Show undo toast
+  const toast = showToast('Item deleted', {
+    action: { label: 'Undo', onClick: () => restoreItem(id) },
+    duration: 5000
+  });
 
-### Command & Context Menus
+  // 3. Actually delete after toast expires
+  toast.onClose(() => api.delete(id));
+}
+```
 
-[TO BE DEVELOPED: Right-click menus, command palettes, dropdown menus, action sheets]
+**When to still use confirmation**: Irreversible actions (account deletion), high-cost actions (large purchases), batch operations on many items.
 
-## Error Prevention & Recovery
+## Keyboard Navigation Patterns
 
-### Constraints & Guards
+### Roving Tabindex
 
-[TO BE DEVELOPED: Input constraints, disabled states, confirmation dialogs for destructive actions, undo mechanisms]
+For component groups (tabs, menu items, radio groups), one item is tabbable; arrow keys move within:
 
-### Error Messages
+```html
+<div role="tablist">
+  <button role="tab" tabindex="0">Tab 1</button>
+  <button role="tab" tabindex="-1">Tab 2</button>
+  <button role="tab" tabindex="-1">Tab 3</button>
+</div>
+```
 
-[TO BE DEVELOPED: Clear language, actionable guidance, positive framing, where to show errors, when to show errors]
+Arrow keys move `tabindex="0"` between items. Tab moves to the next component entirely.
 
-### Undo & Redo
+### Skip Links
 
-[TO BE DEVELOPED: Undo patterns, toast notifications with undo, versioning, draft auto-save]
+For keyboard users, provide a skip link to jump past navigation:
+
+```html
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<nav>...</nav>
+<main id="main-content">...</main>
+```
+
+```css
+.skip-link {
+  position: absolute;
+  left: -9999px;
+}
+.skip-link:focus {
+  left: 0;
+  z-index: 9999;
+  /* Visible styling */
+}
+```
+
+## Gesture Discoverability
+
+Swipe-to-delete and similar gestures are invisible. Hint at their existence:
+
+- **Partially reveal**: Show delete button peeking from edge
+- **Onboarding**: Coach marks on first use
+- **Alternative**: Always provide a visible fallback (menu with "Delete")
+
+Don't rely on gestures as the only way to perform actions.
 
 ---
 

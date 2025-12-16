@@ -22,163 +22,263 @@ Then write copy that is:
 - Human and empathetic
 - Consistent in terminology and tone
 
-## Fundamental Principles
+## The Button Label Problem
 
-### Clarity Over Cleverness
+**Never use "OK", "Submit", or "Yes/No".** These are lazy and ambiguous. Use specific verb + object patterns:
 
-[TO BE DEVELOPED: Plain language, avoid jargon, specific over vague, "Save changes" not "OK"]
+| Bad | Good | Why |
+|-----|------|-----|
+| OK | Save changes | Says what will happen |
+| Submit | Create account | Outcome-focused |
+| Yes | Delete message | Confirms the action |
+| Cancel | Keep editing | Clarifies what "cancel" means |
+| Click here | Download PDF | Describes the destination |
 
-### Concise But Complete
+**For destructive actions**, name the destruction:
+- "Delete" not "Remove" (delete is permanent, remove implies recoverable)
+- "Delete 5 items" not "Delete selected" (show the count)
 
-[TO BE DEVELOPED: Remove unnecessary words, but include essential information, balance brevity with clarity]
+## Error Messages: The Formula
 
-### Active Voice
+Every error message should answer three questions:
 
-[TO BE DEVELOPED: "We saved your changes" not "Your changes have been saved", action-oriented language]
+1. **What happened?** (Clearly state the problem)
+2. **Why?** (If not obvious)
+3. **How to fix it?** (Specific action)
 
-### User-Focused Language
+```
+Bad:  "Invalid input"
 
-[TO BE DEVELOPED: "Your" not "The", focus on user benefits, user's mental model]
+Good: "Email address isn't valid. Please include an @ symbol."
 
-### Consistency
+Bad:  "Request failed"
 
-[TO BE DEVELOPED: Use same terms throughout, don't vary for variety, build terminology glossary]
+Good: "We couldn't save your changes. Check your internet connection and try again."
+```
 
-## Voice & Tone
+### Error Message Templates
 
-### Establishing Brand Voice
+| Situation | Template |
+|-----------|----------|
+| **Format error** | "[Field] needs to be [format]. Example: [example]" |
+| **Missing required** | "Please enter [what's missing]" |
+| **Permission denied** | "You don't have access to [thing]. [What to do instead]" |
+| **Network error** | "We couldn't reach [thing]. Check your connection and [action]." |
+| **Server error** | "Something went wrong on our end. We're looking into it. [Alternative action]" |
 
-[TO BE DEVELOPED: Personality dimensions, voice guidelines, voice vs tone distinction]
+### Don't Blame the User
 
-### Adapting Tone to Context
+```
+Bad:  "You entered an invalid date"
+Good: "Please enter a date in MM/DD/YYYY format"
 
-[TO BE DEVELOPED: Success = celebratory, Error = empathetic, Loading = reassuring, matching emotional moment]
+Bad:  "Your password is too weak"
+Good: "Add at least one number or symbol to strengthen your password"
+```
 
-### Voice Across Cultures
+## Empty States Are Opportunities
 
-[TO BE DEVELOPED: Cultural sensitivity, humor translation, formality levels, global considerations]
+An empty list isn't a dead end—it's an onboarding moment.
 
-## Microcopy Excellence
+```
+Bad:  "No items"
 
-### Button & CTA Copy
+Good: "No projects yet
+       Projects help you organize your work. Create your first one to get started.
+       [+ Create project]"
+```
 
-[TO BE DEVELOPED: Specific actions ("Create account" not "Submit"), verb + noun structure, outcome-oriented]
+**Empty state formula**:
+1. Acknowledge the emptiness (briefly)
+2. Explain the value of filling it
+3. Provide a clear action
 
-### Labels & Instructions
+## Voice vs Tone
 
-[TO BE DEVELOPED: Clear, specific labels, instructions before fields, showing format with examples]
+**Voice** is your brand's personality—consistent everywhere.
+**Tone** adapts to the moment.
 
-### Placeholder Text
+| Moment | Tone Shift |
+|--------|------------|
+| Success | Celebratory, brief: "Done! Your changes are live." |
+| Error | Empathetic, helpful: "That didn't work. Here's what to try..." |
+| Loading | Reassuring: "Saving your work..." |
+| Destructive confirm | Serious, clear: "Delete this project? This can't be undone." |
 
-[TO BE DEVELOPED: When to use (rarely), never as labels, examples not instructions]
-
-### Tooltips & Help Text
-
-[TO BE DEVELOPED: Adding value beyond label, answering implicit questions, brevity with links to details]
-
-## Error Messages & Validation
-
-### Error Message Principles
-
-[TO BE DEVELOPED: Explain what happened, suggest fix, don't blame user, provide examples, link to help]
-
-### Validation Feedback
-
-[TO BE DEVELOPED: Inline validation, timing (on blur vs on submit), success states, clear requirements]
-
-### Error Message Patterns
-
-[TO BE DEVELOPED: Format errors, permission errors, network errors, system errors, 404s]
-
-## Forms & Inputs
-
-### Form Labels
-
-[TO BE DEVELOPED: Descriptive labels, required field indication, why you're asking (when not obvious)]
-
-### Help Text
-
-[TO BE DEVELOPED: Format guidance, why you need this information, examples, constraints]
-
-### Confirmation Dialogs
-
-[TO BE DEVELOPED: Specific about action, explain consequences, clear button labels, don't overuse]
-
-## System Messages
-
-### Success Messages
-
-[TO BE DEVELOPED: Confirm what happened, what happens next, celebrate appropriately, be brief]
-
-### Loading States
-
-[TO BE DEVELOPED: What's happening, time expectations, progress indication, personality in waiting]
-
-### Empty States
-
-[TO BE DEVELOPED: Explain why empty, value of filling it, clear CTA, welcoming not dead-end]
-
-## Navigation & Wayfinding
-
-### Navigation Labels
-
-[TO BE DEVELOPED: Specific and descriptive, user language not internal terms, clear information scent]
-
-### Breadcrumbs & Headers
-
-[TO BE DEVELOPED: Clear location indication, hierarchical clarity, shortened for mobile]
-
-### Search & Filters
-
-[TO BE DEVELOPED: Clear search placeholders, filter labels, no results messaging]
-
-## Content Hierarchy & Structure
-
-### Scannable Writing
-
-[TO BE DEVELOPED: Short paragraphs, bullet points, clear headings, front-load important info]
-
-### Progressive Disclosure
-
-[TO BE DEVELOPED: Essential info first, details on demand, expandable sections, learn more links]
+**Never use humor for errors.** Users are already frustrated. Be helpful, not cute.
 
 ## Writing for Accessibility
 
-### Screen Reader Considerations
+### Link Text
 
-[TO BE DEVELOPED: ARIA labels, alt text writing, link text clarity, button labels]
+Screen readers can navigate by links. Vague links fail:
 
-### Plain Language
+```html
+<!-- Bad: meaningless without context -->
+<a href="...">Click here</a>
+<a href="...">Learn more</a>
 
-[TO BE DEVELOPED: Reading level considerations, avoid jargon, explain technical terms]
+<!-- Good: standalone meaning -->
+<a href="...">View pricing plans</a>
+<a href="...">Learn more about data export</a>
+```
 
-### Text Alternatives
+### Alt Text
 
-[TO BE DEVELOPED: Transcripts for audio/video, alt text for images, descriptions for complex UI]
+Describe the **information**, not the image:
 
-## Internationalization (i18n)
+```html
+<!-- Bad: describes image -->
+<img alt="Chart" src="revenue.png">
 
-### Writing for Translation
+<!-- Good: describes information -->
+<img alt="Revenue increased 40% in Q4" src="revenue.png">
 
-[TO BE DEVELOPED: Avoid idioms, complete sentences, context for translators, text expansion space]
+<!-- Decorative images get empty alt -->
+<img alt="" src="decorative-wave.png">
+```
 
-### Cultural Adaptation
+### Button Context
 
-[TO BE DEVELOPED: Cultural sensitivity, date/time formats, address formats, name formats]
+Buttons need context, especially icons:
 
-## Content Patterns by Type
+```html
+<!-- Bad: no context -->
+<button>×</button>
 
-### Onboarding Copy
+<!-- Good: screen reader context -->
+<button aria-label="Close dialog">×</button>
+```
 
-[TO BE DEVELOPED: Welcome messages, getting started, first-time guidance, value proposition]
+## Writing for Translation
 
-### Settings & Preferences
+### Plan for Expansion
 
-[TO BE DEVELOPED: Clear option descriptions, impact explanation, defaults indication]
+German text is ~30% longer than English. Allocate space:
 
-### Notifications
+| Language | Expansion |
+|----------|-----------|
+| German | +30% |
+| French | +20% |
+| Finnish | +30-40% |
+| Chinese | -30% (fewer chars, but same width) |
 
-[TO BE DEVELOPED: Scannable, actionable, appropriate urgency, notification fatigue prevention]
+### Translation-Friendly Patterns
+
+```
+Bad:  "You have 3 new messages"  (number inside sentence)
+Good: "New messages: 3"          (number separate)
+
+Bad:  "Welcome back, {name}!"    (word order varies by language)
+Good: "{greeting_message}"       (full sentence as one string)
+
+Bad:  "5 mins ago"               (abbrev doesn't translate)
+Good: "5 minutes ago"            (full word)
+```
+
+### Give Translators Context
+
+```json
+{
+  "delete_confirm": {
+    "message": "Delete {item}?",
+    "context": "Confirmation dialog when deleting a file or folder. {item} is the name of the item being deleted."
+  }
+}
+```
+
+## Consistency: The Terminology Problem
+
+Pick one term and stick with it:
+
+| Inconsistent | Consistent |
+|--------------|------------|
+| Delete / Remove / Trash | Delete |
+| Settings / Preferences / Options | Settings |
+| Sign in / Log in / Enter | Sign in |
+| Create / Add / New | Create |
+
+Build a terminology glossary and enforce it. Variety creates confusion.
+
+## Avoid Redundant Copy
+
+Saying the same thing twice wastes space and dilutes impact.
+
+**Common redundancies**:
+- Section header + intro paragraph saying the same thing
+- Page title + section title with same/similar text
+- CTA button + surrounding text repeating the action
+- Outro that restates the intro
+
+```
+Bad:  "Settings"
+      "Here you can adjust your settings and preferences."
+      [Settings form]
+      "Save your settings to apply changes."
+
+Good: "Settings"
+      [Settings form]
+      [Save]
+```
+
+**The rule**: If the heading explains it, the intro is redundant. If the button is clear, don't explain it again. Say it once, say it well.
+
+## Loading States
+
+Tell users what's happening:
+
+```
+Bad:  "Loading..."
+Good: "Saving your draft..."
+
+Bad:  [spinner]
+Good: "Searching 1,247 documents..."
+
+Bad:  "Please wait"
+Good: "Preparing your download... This usually takes 30 seconds."
+```
+
+For long waits, show progress or set expectations.
+
+## Confirmation Dialogs: Use Sparingly
+
+**Most confirmation dialogs are design failures.** If an action is dangerous enough to confirm, consider:
+- Undo instead of confirm
+- Making the action less destructive
+- Showing consequences before the action
+
+When you must confirm:
+
+```
+Bad:  "Are you sure?"
+      [Yes] [No]
+
+Good: "Delete 'Project Alpha'?
+       This will permanently delete the project and all its files.
+       [Delete project] [Keep project]"
+```
+
+Name the action, explain consequences, use specific button labels.
+
+## Form Instructions
+
+### Format Hints
+
+Show don't tell:
+
+```
+Bad:  "Enter date in MMDDYYYY format"
+Good: "Date of birth" + placeholder="04/15/1990"
+```
+
+### Why Are You Asking?
+
+For non-obvious fields, explain:
+
+```html
+<label>Phone number (optional)</label>
+<span class="help">We'll only use this to contact you about your order.</span>
+```
 
 ---
 

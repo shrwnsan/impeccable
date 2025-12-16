@@ -21,93 +21,266 @@ Then build layout systems that are:
 - Responsive and adaptive across viewports
 - Compositionally strong with clear focal points
 
-## Classic Composition Principles
-
-### Visual Hierarchy Fundamentals
-
-[TO BE DEVELOPED: Size, weight, color, position, contrast as hierarchy tools, Gestalt principles (proximity, similarity, closure)]
-
-### Balance & Symmetry
-
-[TO BE DEVELOPED: Symmetrical vs asymmetrical balance, visual weight calculation, creating tension and resolution]
-
-### The Rule of Thirds & Golden Ratio
-
-[TO BE DEVELOPED: Classic composition grids, golden ratio applications, when to follow vs break rules]
-
-### Focal Points & Eye Movement
-
-[TO BE DEVELOPED: Creating focal points, directing eye flow, Z/F/circular patterns, intentional disruption]
-
 ## Spacing Systems
 
-### Spacing Scales
+### Use 4pt Base, Not 8pt
 
-[TO BE DEVELOPED: 4pt/8pt systems, modular scales, mathematical progressions (linear, exponential, Fibonacci)]
+8pt systems are too coarse. **4pt gives you the granularity you actually need:**
 
-### Vertical Rhythm
+```css
+:root {
+  --space-1: 4px;    /* 0.25rem - tight */
+  --space-2: 8px;    /* 0.5rem */
+  --space-3: 12px;   /* 0.75rem */
+  --space-4: 16px;   /* 1rem - base */
+  --space-6: 24px;   /* 1.5rem */
+  --space-8: 32px;   /* 2rem */
+  --space-12: 48px;  /* 3rem */
+  --space-16: 64px;  /* 4rem */
+  --space-24: 96px;  /* 6rem - section gaps */
+}
+```
 
-[TO BE DEVELOPED: Baseline grids, consistent vertical spacing, spacing ratios, rhythm across components]
+**The insight**: You'll frequently need 12px (between 8 and 16). An 8pt-only system forces awkward choices.
 
-### Micro vs Macro Space
+### Name Tokens by Relationship, Not Value
 
-[TO BE DEVELOPED: Component-internal spacing, between-component spacing, section spacing, page-level breathing room]
+```css
+/* Bad: tied to pixels */
+--spacing-8: 8px;
+--spacing-16: 16px;
 
-### Spacing Token Architecture
+/* Better: semantic */
+--space-xs: 4px;   /* Tight inline gaps */
+--space-sm: 8px;   /* Between related elements */
+--space-md: 16px;  /* Component padding */
+--space-lg: 24px;  /* Between components */
+--space-xl: 48px;  /* Section padding */
+--space-2xl: 96px; /* Section margins */
+```
 
-[TO BE DEVELOPED: Primitive spacing tokens, semantic spacing (component gaps, section padding), contextual spacing]
+### Gap Over Margin
 
-## Grid Systems & Layout Patterns
+**Stop using margins for spacing between siblings.** Use `gap`:
 
-### Grid Fundamentals
+```css
+/* Old way: margins create double-spacing bugs */
+.card { margin-bottom: 16px; }
+.card:last-child { margin-bottom: 0; } /* Cleanup hack */
 
-[TO BE DEVELOPED: Column grids, modular grids, baseline grids, grid anatomy (columns, gutters, margins)]
+/* Modern way: gap just works */
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;  /* Automatic, no cleanup needed */
+}
+```
 
-### Classic Layout Patterns
+Gap works in Flexbox and Grid. It's cleaner, more intentional, and eliminates margin collapse headaches.
 
-[TO BE DEVELOPED: Sidebar layouts, holy grail, card grids, masonry, magazine layouts, asymmetric layouts]
+## Grid Systems
 
-### Modern CSS Layout
+### The Self-Adjusting Grid
 
-[TO BE DEVELOPED: CSS Grid (explicit placement, auto-placement, grid areas), Flexbox (direction, alignment, distribution), Container Queries]
+This pattern creates responsive grids without breakpoints:
 
-## Creating Visual Hierarchy
+```css
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg);
+}
+```
 
-### Hierarchy Through Scale
+**How it works**: Columns are at least 280px. As many as fit per row. Leftovers stretch. No media queries needed.
 
-[TO BE DEVELOPED: Size relationships, proportional scaling, meaningful jumps vs gradual progression]
+**Variation for exact counts:**
+```css
+/* Always 3 columns on desktop, stack on mobile */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: var(--space-lg);
+}
+```
 
-### Hierarchy Through Weight & Color
+### Grid Area Naming
 
-[TO BE DEVELOPED: Visual weight calculation, using color for emphasis, combining multiple hierarchy tools]
+For complex layouts, named areas are clearer than line numbers:
 
-### Hierarchy Through Position
+```css
+.page {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: auto 1fr auto;
+}
 
-[TO BE DEVELOPED: Placement importance, reading order, visual flow direction, breaking the grid for emphasis]
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.main { grid-area: main; }
+.footer { grid-area: footer; }
+```
 
-## Responsive Spatial Design
+At mobile breakpoints, redefine the areas:
+```css
+@media (max-width: 768px) {
+  .page {
+    grid-template-areas:
+      "header"
+      "main"
+      "sidebar"
+      "footer";
+    grid-template-columns: 1fr;
+  }
+}
+```
 
-### Breakpoint Strategy
+## Visual Hierarchy
 
-[TO BE DEVELOPED: Mobile-first vs desktop-first, breakpoint values, in-between states, content-driven breakpoints]
+### The Squint Test
 
-### Layout Adaptation
+Blur your eyes (or screenshot and blur). Can you still identify:
+- The most important element?
+- The second most important?
+- Clear groupings?
 
-[TO BE DEVELOPED: Reflow patterns, navigation transformation, content prioritization, progressive disclosure]
+If everything looks the same weight blurred, you have a hierarchy problem.
 
-### Fluid Spacing & Layout
+### Hierarchy Through Multiple Dimensions
 
-[TO BE DEVELOPED: clamp() for spacing, viewport units, fluid grids, container-relative spacing]
+Don't rely on size alone. Combine:
 
-## Depth & Layering
+| Tool | Strong Hierarchy | Weak Hierarchy |
+|------|------------------|----------------|
+| **Size** | 3:1 ratio or more | <2:1 ratio |
+| **Weight** | Bold vs Regular | Medium vs Regular |
+| **Color** | High contrast | Similar tones |
+| **Position** | Top/left (primary) | Bottom/right |
+| **Space** | Surrounded by white space | Crowded |
 
-### Creating Depth
+**The best hierarchy uses 2-3 dimensions at once**: A heading that's larger, bolder, AND has more space above it.
 
-[TO BE DEVELOPED: Layering, shadows, elevation systems, z-index scales, parallax effects]
+### Cards Are Not Required
 
-### Overlap & Intersection
+Cards (bordered/shadowed containers) are overused. You don't need a card to create visual grouping—spacing and alignment do this naturally.
 
-[TO BE DEVELOPED: Intentional overlap, breaking containers, elements that cross boundaries]
+**Use cards when**:
+- Content is truly distinct and actionable (a product, a post, a task)
+- Items need to be visually comparable in a grid
+- Content needs clear boundaries for interaction (hover, click)
+
+**Don't use cards for**:
+- General layout structure (use spacing instead)
+- Single items (a lone card looks arbitrary)
+- Nesting—**never put cards inside cards**. If you need hierarchy within a card, use spacing, typography, and subtle dividers instead
+
+```css
+/* Bad: card in a card */
+.outer-card > .inner-card { /* Noisy and confusing */ }
+
+/* Good: hierarchy without nesting */
+.card > .card-section { border-top: 1px solid var(--border); }
+```
+
+## Container Queries
+
+Viewport queries are for page layouts. **Container queries are for components**:
+
+```css
+.card-container {
+  container-type: inline-size;
+}
+
+.card {
+  display: grid;
+  gap: var(--space-md);
+}
+
+/* Card layout changes based on its container, not viewport */
+@container (min-width: 400px) {
+  .card {
+    grid-template-columns: 120px 1fr;
+  }
+}
+```
+
+**Why this matters**: A card in a narrow sidebar stays compact, while the same card in a main content area expands—automatically, without viewport hacks.
+
+## Optical Adjustments
+
+### Text Doesn't Align
+
+A paragraph set to `margin-left: 0` looks indented because letterforms have internal whitespace. Fix with negative margin or padding:
+
+```css
+.heading {
+  margin-left: -0.05em;  /* Pull left to optically align */
+}
+```
+
+### Icons Need Optical Centering
+
+A geometrically centered icon often looks off-center. Play icons need to shift right, left-arrows need to shift left:
+
+```css
+.play-button svg {
+  transform: translateX(2px);  /* Optical center */
+}
+```
+
+### Touch Targets vs Visual Size
+
+Buttons can look small but need large touch targets (44px minimum). Use padding or pseudo-elements:
+
+```css
+.icon-button {
+  width: 24px;  /* Visual size */
+  height: 24px;
+  position: relative;
+}
+
+.icon-button::before {
+  content: '';
+  position: absolute;
+  inset: -10px;  /* Expand tap target to 44px */
+}
+```
+
+## Depth & Elevation
+
+### Semantic Z-Index
+
+Don't use arbitrary numbers. Create a scale:
+
+```css
+:root {
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal-backdrop: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+}
+```
+
+### Shadow Scale for Elevation
+
+Shadows indicate elevation. Create a consistent scale:
+
+```css
+:root {
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);         /* Subtle lift */
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07);         /* Cards */
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);        /* Dropdowns */
+  --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);       /* Modals */
+}
+```
+
+**Key insight**: Shadows should be subtle. If you can clearly see the shadow, it's probably too strong.
 
 ---
 

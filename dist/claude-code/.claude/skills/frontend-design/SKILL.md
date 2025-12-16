@@ -57,7 +57,7 @@ Focus on intentional, distinctive design choices:
 
 **Space**: Use a spacing scale (4, 8, 12, 16, 24, 32, 48, 64, 96). Create visual rhythm through varied spacing. Let content breathe. Break the grid intentionally.
 
-**Motion**: Animate with purpose—guide attention and confirm actions. Use 150-300ms for micro-interactions. Prefer transform and opacity. Stagger reveals for orchestrated page loads.
+**Motion**: Animate with purpose—guide attention and confirm actions. Use 150-300ms for micro-interactions. Prefer transform and opacity with smooth ease-out curves (quart, quint, expo). Stagger reveals for orchestrated page loads.
 
 **Interaction**: Design clear focus indicators. Make touch targets 44×44px minimum. Provide immediate feedback. Write specific, helpful error messages.
 
@@ -67,11 +67,13 @@ Focus on intentional, distinctive design choices:
 
 These patterns create generic "AI slop" aesthetics:
 
-**Generic Visuals**: Defaulting to Inter/Roboto/Arial, purple-to-blue gradients on white, wrapping everything in rounded cards, decorative shadows without purpose.
+**Generic Visuals**: Defaulting to Inter/Roboto/Arial, purple-to-blue gradients on white, pure grays without color tint, wrapping everything in rounded cards, decorative shadows without purpose.
 
-**Structural Issues**: Arbitrary spacing without a scale, hierarchy through size alone, equal spacing everywhere, cards nested inside cards.
+**Structural Issues**: Arbitrary spacing without a scale, hierarchy through size alone, equal spacing everywhere, cards nested inside cards, redundant copy (headers restating intros, repeated explanations).
 
-**Interaction Failures**: Removing focus outlines without alternatives, placeholder text as labels, touch targets under 44×44px, generic "Something went wrong" errors.
+**Motion Mistakes**: Bounce and elastic easing (dated and tacky), animating layout properties, durations over 500ms for feedback, animation without purpose.
+
+**Interaction Failures**: Removing focus outlines without alternatives, placeholder text as labels, touch targets under 44×44px, generic "Something went wrong" errors, gray text on colored backgrounds.
 
 **Accessibility Violations**: Color-only meaning, ignoring prefers-reduced-motion, failing WCAG contrast, creating keyboard traps.
 

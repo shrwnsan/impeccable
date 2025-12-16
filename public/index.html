@@ -9,316 +9,191 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="tailwindcss" />
   <link rel="stylesheet" href="./css/main.css">
-  
-  <!-- Import Maps for ES Module dependencies -->
-  <script type="importmap">
-  {
-    "imports": {
-      "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.16/+esm",
-      "motion": "https://cdn.jsdelivr.net/npm/motion@12.23.26/+esm",
-      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
-    }
-  }
-  </script>
 </head>
-<body class="min-h-screen overflow-x-hidden leading-relaxed">
-  <!-- Grain Overlay -->
-  <div class="grain-overlay" aria-hidden="true"></div>
-  
-  <!-- 1. HERO - Liquid Typography -->
-  <header class="hero-section" id="hero">
-    <canvas class="hero-canvas" id="hero-canvas"></canvas>
-    <div class="hero-container">
+<body>
+  <!-- 1. HERO - Hook with the problem statement -->
+  <header class="hero">
+    <div class="hero-grid">
       <div class="hero-content">
-        <p class="hero-eyebrow" data-reveal data-split-text>The Anti-Slop Framework for AI Design</p>
-        <h1 class="hero-title" data-reveal>
-          <span class="hero-title-line" data-split-text>Impeccable</span>
-          <span class="hero-title-line hero-title-accent" data-split-text>Style</span>
+        <h1 class="title">
+          <span class="title-main">Impeccable style</span>
+          <span class="title-sub">made easy</span>
         </h1>
-        <p class="hero-subtitle" data-reveal>One design skill and 15 commands that work across Cursor, Claude Code, Gemini CLI, and Codex CLI. Stop getting generic AI output. Start getting intentional design.</p>
-        <div class="hero-cta" data-reveal>
-          <a href="#downloads" class="btn btn-primary">Get the Framework</a>
-        </div>
+        <p class="tagline">Your LLM can design beautiful interfaces.<br>It just needs to know what to ask for.</p>
+        <p class="providers">Works with Cursor · Claude Code · Gemini CLI · Codex CLI</p>
       </div>
-    </div>
-    <div class="hero-scroll-indicator" aria-hidden="true">
-      <span>Scroll</span>
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M12 5v14M19 12l-7 7-7-7"/>
-      </svg>
+      <div class="hero-decoration" aria-hidden="true">
+        <div class="deco-line"></div>
+        <div class="deco-circle"></div>
+      </div>
     </div>
   </header>
 
-  <main class="site-content">
-    <!-- 2. THE PROBLEM - AI Design Bias -->
-    <section class="problem-section" id="problem">
-      <div class="section-header" data-reveal>
-        <span class="section-number">01</span>
-        <h2 class="section-title">AI Has Design Bias</h2>
-      </div>
-      <div class="problem-content">
-        <p class="section-lead" data-reveal>Every LLM learned from the same generic templates. Without guidance, you get the same predictable mistakes—every single time.</p>
-
-        <!-- Bias Examples Grid -->
-        <div class="bias-grid" data-reveal>
-          <div class="bias-item">
-            <span class="bias-icon">Aa</span>
-            <div class="bias-content">
-              <strong>Safe fonts</strong>
-              <span>Defaults to Inter, Roboto, system fonts</span>
-            </div>
-          </div>
-          <div class="bias-item">
-            <span class="bias-icon">◐</span>
-            <div class="bias-content">
-              <strong>Purple gradients</strong>
-              <span>Purple-to-blue on white backgrounds</span>
-            </div>
-          </div>
-          <div class="bias-item">
-            <span class="bias-icon">▢</span>
-            <div class="bias-content">
-              <strong>Cards everywhere</strong>
-              <span>Wraps everything in rounded boxes</span>
-            </div>
-          </div>
-          <div class="bias-item">
-            <span class="bias-icon">◫</span>
-            <div class="bias-content">
-              <strong>Gray on color</strong>
-              <span>Gray text on colored backgrounds</span>
-            </div>
-          </div>
-          <div class="bias-item">
-            <span class="bias-icon">≡</span>
-            <div class="bias-content">
-              <strong>Centered everything</strong>
-              <span>Centers all text and layouts</span>
-            </div>
-          </div>
-          <div class="bias-item">
-            <span class="bias-icon">◌</span>
-            <div class="bias-content">
-              <strong>Decorative shadows</strong>
-              <span>Adds shadows without purpose</span>
-            </div>
-          </div>
+  <main class="container">
+    <!-- 2. THE PROBLEM - Show the "AI slop" aesthetic -->
+    <section class="problem-section">
+      <div class="problem-grid">
+        <div class="problem-content">
+          <h2 class="section-title">The Problem</h2>
+          <p class="problem-lead">LLMs are biased toward safe, generic design choices. Without guidance, you get the same predictable aesthetic every time.</p>
         </div>
-
-        <div class="split-comparison" id="lens-comparison">
-          <div class="split-container">
-            <!-- Before: AI Slop -->
-            <div class="split-before">
-              <div class="slop-card">
-                <div class="slop-header">
-                  <div class="slop-avatar"></div>
-                  <div class="slop-text">
-                    <div class="slop-title">Welcome to Our Platform</div>
-                    <div class="slop-subtitle">The best solution for your needs</div>
-                  </div>
+        <div class="problem-showcase">
+          <div class="ai-slop-demo">
+            <div class="slop-card">
+              <div class="slop-header">
+                <div class="slop-avatar"></div>
+                <div class="slop-text">
+                  <div class="slop-title">Welcome to Our Platform</div>
+                  <div class="slop-subtitle">The best solution for your needs</div>
                 </div>
-                <p class="slop-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. This is generic placeholder text.</p>
-                <button class="slop-button">Get Started</button>
               </div>
-              <!-- Callout labels pointing to issues -->
-              <div class="slop-callouts">
-                <span class="slop-callout" data-point="font">Inter font (again)</span>
-                <span class="slop-callout" data-point="gradient">Purple gradient</span>
-                <span class="slop-callout" data-point="copy">Generic copy</span>
-                <span class="slop-callout" data-point="rounded">Cards on cards</span>
-              </div>
+              <p class="slop-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. This is generic placeholder text in a card layout.</p>
+              <button class="slop-button">Get Started</button>
             </div>
-            <!-- After: Impeccable (shown through split) -->
-            <div class="split-after">
-              <div class="impeccable-card">
-                <p class="impeccable-eyebrow">Introducing</p>
-                <h3 class="impeccable-title">Thoughtful Design</h3>
-                <p class="impeccable-body">Every element serves a purpose. Hierarchy guides the eye. Whitespace breathes.</p>
-                <button class="impeccable-button">Explore</button>
-              </div>
-            </div>
-            <!-- The Divider -->
-            <div class="split-divider">
-              <span class="split-label">With Skills</span>
-            </div>
-          </div>
-          <div class="split-labels">
-            <div class="split-label-item" data-point="before">
-              <span class="split-label-dot"></span>
-              <span>Generic AI Output</span>
-            </div>
-            <div class="split-label-item" data-point="after">
-              <span class="split-label-dot split-label-dot--accent"></span>
-              <span>With Design Skills</span>
+            <div class="slop-labels">
+              <span class="slop-label" data-point="font">Inter font</span>
+              <span class="slop-label" data-point="gradient">Purple gradient</span>
+              <span class="slop-label" data-point="layout">Card layout</span>
+              <span class="slop-label" data-point="copy">Generic copy</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 3. THE ANTIDOTE - Patterns & Anti-Patterns -->
-    <section class="antidote-section" id="antidote">
-      <div class="section-header" data-reveal>
-        <span class="section-number">02</span>
-        <h2 class="section-title">The Antidote</h2>
-      </div>
-      <div class="antidote-content">
-        <p class="section-lead" data-reveal>The original Claude frontend-design skill says to avoid Arial and Inter. We've expanded it with 60+ specific patterns that fight model bias across every design domain.</p>
-
-        <!-- Patterns by category with tabs -->
-        <div class="patterns-categories" id="patterns-categories">
-          <!-- Rendered by JS -->
+    <!-- 3. THE SOLUTION - Brief explanation -->
+    <section class="solution-section">
+      <div class="solution-grid">
+        <div class="solution-content">
+          <h2 class="section-title">The Solution</h2>
+          <p class="solution-lead">Teach your AI assistant the language of design. <strong>Skills</strong> provide deep design knowledge. <strong>Commands</strong> give you precise control over the creative process.</p>
+        </div>
+        <div class="solution-cards">
+          <div class="solution-card">
+            <div class="solution-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+              </svg>
+            </div>
+            <h3>8 Skills</h3>
+            <p>Deep knowledge in typography, color, motion, spatial design, and more. The AI learns <em>how</em> to think about design.</p>
+          </div>
+          <div class="solution-card">
+            <div class="solution-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z"/>
+              </svg>
+            </div>
+            <h3>15 Commands</h3>
+            <p>Precise actions like <code>/bolder</code>, <code>/animate</code>, <code>/audit</code>. Steer the AI through iterative design refinement.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 4. THE SOLUTION - Two-part system -->
-    <section class="solution-section" id="solution">
-      <div class="section-header" data-reveal>
-        <span class="section-number">03</span>
-        <h2 class="section-title">The Framework</h2>
+    <!-- 4. SKILLS SHOWCASE - Interactive demos -->
+    <section class="skills-section" id="skills-section">
+      <div class="section-header-sticky">
+        <h2 class="section-title">Skills</h2>
+        <p class="section-subtitle">Design knowledge that transforms AI output</p>
       </div>
-      <div class="solution-content">
-        <p class="section-lead" data-reveal>One comprehensive skill with deep expertise, plus 15 commands that form the language of design.</p>
-
-        <div class="solution-visual-interactive" id="framework-viz-container" data-reveal>
-          <!-- Subway map generated by JS -->
-        </div>
-
-        <div class="solution-result" data-reveal>
-          <span class="result-arrow">↓</span>
-          <p class="result-text">Together, they transform generic output into <em>impeccable</em> design.</p>
+      <div class="skills-layout">
+        <nav class="skills-nav" id="skills-nav">
+          <div class="loading">Loading...</div>
+        </nav>
+        <div class="skills-showcase" id="skills-detail">
+          <div class="loading">Select a skill to see it in action</div>
         </div>
       </div>
     </section>
 
-    <!-- 4. COMMANDS - Glass Terminal -->
+    <!-- 5. COMMANDS - Sidebar nav + details (mirrors skills layout) -->
     <section class="commands-section" id="commands-section">
-      <div class="section-header" data-reveal>
-        <span class="section-number">04</span>
-        <h2 class="section-title">Commands in Action</h2>
-        <p class="section-subtitle">See how commands transform your designs</p>
-      </div>
-
-      <div class="commands-gallery">
-          <!-- Rendered by JS -->
-      </div>
-    </section>
-
-    <!-- 5. PLATFORMS -->
-    <section class="platforms-section" id="downloads">
-      <div class="section-header" data-reveal>
-        <span class="section-number">05</span>
-        <h2 class="section-title">One Framework, Every Agent Harness</h2>
-        <p class="section-subtitle">We wrote it once, then compiled it for each platform. Same design intelligence, native to your workflow.</p>
+      <div class="section-header-sticky">
+        <h2 class="section-title">Commands</h2>
+        <p class="section-subtitle">Precise control over the design process</p>
       </div>
       
-      <div class="downloads-grid">
-        <article class="download-card" data-reveal>
-          <div class="download-card-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0-6v6m18-6v6"/>
-            </svg>
+      <div class="commands-layout">
+        <!-- Commands nav (left sidebar) -->
+        <nav class="commands-nav" id="workflow-diagram">
+          <!-- Will be rendered by JS -->
+        </nav>
+        
+        <!-- Command detail (right side) -->
+        <div class="commands-showcase" id="commands-detail">
+          <div class="loading">Select a command to view details</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. DOWNLOAD BUNDLES - After demonstrating value -->
+    <section class="downloads-section" id="downloads">
+      <div class="downloads-header">
+        <h2 class="section-title">Get Started</h2>
+        <p class="downloads-lead">Download the complete bundle for your preferred AI tool. Extract into your project root and start creating.</p>
+      </div>
+      <div class="download-grid">
+        <article class="download-card" data-animate>
+          <div class="card-inner">
+            <div class="card-header">
+              <h3>Cursor</h3>
+              <span class="badge">Rules + Commands</span>
+            </div>
+            <p>Commands and rules for Cursor IDE. Works via appending, no frontmatter required.</p>
+            <button class="btn btn-primary" data-bundle="cursor">Download</button>
           </div>
-          <div class="download-card-content">
-            <h3 class="download-card-title">Cursor</h3>
-            <span class="download-card-badge">Rules + Commands</span>
-            <p class="download-card-desc">Commands and rules for Cursor IDE. Works via appending, no frontmatter required.</p>
-          </div>
-          <button class="btn btn-primary" data-bundle="cursor">
-            <span>Download</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-            </svg>
-          </button>
         </article>
 
-        <article class="download-card" data-reveal>
-          <div class="download-card-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
+        <article class="download-card" data-animate>
+          <div class="card-inner">
+            <div class="card-header">
+              <h3>Claude Code</h3>
+              <span class="badge">Full Featured</span>
+            </div>
+            <p>Complete YAML frontmatter with argument support. Follows Anthropic Skills specification.</p>
+            <button class="btn btn-primary" data-bundle="claude-code">Download</button>
           </div>
-          <div class="download-card-content">
-            <h3 class="download-card-title">Claude Code</h3>
-            <span class="download-card-badge">Full Featured</span>
-            <p class="download-card-desc">Complete YAML frontmatter with argument support. Follows Anthropic Skills specification.</p>
-          </div>
-          <button class="btn btn-primary" data-bundle="claude-code">
-            <span>Download</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-            </svg>
-          </button>
         </article>
 
-        <article class="download-card" data-reveal>
-          <div class="download-card-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
-            </svg>
+        <article class="download-card" data-animate>
+          <div class="card-inner">
+            <div class="card-header">
+              <h3>Gemini CLI</h3>
+              <span class="badge">TOML + Modular</span>
+            </div>
+            <p>TOML-formatted commands with modular skill imports via GEMINI.md.</p>
+            <button class="btn btn-primary" data-bundle="gemini">Download</button>
           </div>
-          <div class="download-card-content">
-            <h3 class="download-card-title">Gemini CLI</h3>
-            <span class="download-card-badge">TOML + Modular</span>
-            <p class="download-card-desc">TOML-formatted commands with modular skill imports via GEMINI.md.</p>
-          </div>
-          <button class="btn btn-primary" data-bundle="gemini">
-            <span>Download</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-            </svg>
-          </button>
         </article>
 
-        <article class="download-card" data-reveal>
-          <div class="download-card-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
-            </svg>
+        <article class="download-card" data-animate>
+          <div class="card-inner">
+            <div class="card-header">
+              <h3>Codex CLI</h3>
+              <span class="badge">Prompts + Routing</span>
+            </div>
+            <p>Custom prompt format with skill routing through AGENTS.md architecture.</p>
+            <button class="btn btn-primary" data-bundle="codex">Download</button>
           </div>
-          <div class="download-card-content">
-            <h3 class="download-card-title">Codex CLI</h3>
-            <span class="download-card-badge">Prompts + Routing</span>
-            <p class="download-card-desc">Custom prompt format with skill routing through AGENTS.md architecture.</p>
-          </div>
-          <button class="btn btn-primary" data-bundle="codex">
-            <span>Download</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-            </svg>
-          </button>
         </article>
       </div>
     </section>
 
     <!-- 7. OPEN SOURCE -->
-    <section class="opensource-section" id="opensource">
-      <div class="opensource-content" data-reveal>
-        <h2 class="opensource-title">Open Source</h2>
-        <p class="opensource-desc">View the source, contribute skills and commands, or report issues on GitHub.</p>
-        <a href="https://github.com/pbakaus/vibe-design-plugins" class="btn btn-secondary">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
-          <span>View Repository</span>
-        </a>
+    <section class="contribute">
+      <div class="contribute-content">
+        <h2>Open Source</h2>
+        <p>View the source, contribute skills and commands, or report issues on GitHub.</p>
+        <a href="https://github.com/pbakaus/vibe-design-plugins" class="btn btn-secondary">View Repository</a>
       </div>
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer>
     <div class="footer-content">
-      <div class="footer-brand">
-        <span class="footer-logo">impeccable.style</span>
-        <p class="footer-tagline">The anti-slop framework for AI design</p>
-      </div>
-      <div class="footer-links">
-        <a href="#antidote">Anti-Patterns</a>
-        <a href="#commands-section">Commands</a>
-        <a href="#downloads">Downloads</a>
-        <a href="https://github.com/pbakaus/vibe-design-plugins">GitHub</a>
-      </div>
+      <p>impeccable.style</p>
+      <p><a href="https://github.com/pbakaus/vibe-design-plugins">GitHub</a></p>
     </div>
   </footer>
 
