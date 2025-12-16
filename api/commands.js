@@ -1,7 +1,45 @@
-import { getCommands } from "../server/lib/api-handlers.js";
+import { readdir, readFile } from "fs/promises";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const PROJECT_ROOT = join(__dirname, "..");
 
 export default async function handler(request) {
-  const commands = await getCommands();
-  return Response.json(commands);
+  try {
+    const sourceDir = join(PROJECT_ROOT, "source");
+    const commandsDir = join(sourceDir, "commands");
+
+    console.log("PROJECT_ROOT:", PROJECT_ROOT);
+    console.log("commandsDir:", commandsDir);
+
+    const files = await readdir(commandsDir);
+    const commands = [];
+
+    for (const file of files) {
+      if (file.endsWith(".md")) {
+        const content = await readFile(join(commandsDir, file), "utf-8");
+        const frontmatterMatch = content.match(/^---\n([\s\S]+?)\n---/);
+
+        if (frontmatterMatch) {
+          const frontmatter = frontmatterMatch[1];
+          const nameMatch = frontmatter.match(/name:\s*(.+)/);
+          const descMatch = frontmatter.match(/description:\s*(.+)/);
+
+          commands.push({
+            id: file.replace(".md", ""),
+            name: nameMatch?.[1]?.trim() || file.replace(".md", ""),
+            description: descMatch?.[1]?.trim() || "No description available",
+          });
+        }
+      }
+    }
+
+    return Response.json(commands);
+  } catch (error) {
+    console.error("Error in /api/commands:", error);
+    return Response.json({ error: error.message, stack: error.stack }, { status: 500 });
+  }
 }
 
