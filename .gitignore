@@ -3,8 +3,7 @@ node_modules/
 
 # Generated files
 dist/*.zip
-public/css/styles.css
-public/dist/
+build/
 
 # Build artifacts
 *.log

@@ -48,64 +48,47 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 
 /**
- * Build Tailwind CSS for production
+ * Build static site using Bun's HTML bundler
+ * Automatically bundles JS, CSS (with Tailwind), and assets
  */
-function buildTailwindCSS() {
-  const inputFile = path.join(ROOT_DIR, 'public', 'css', 'main.css');
-  const outputFile = path.join(ROOT_DIR, 'public', 'css', 'styles.css');
+async function buildStaticSite() {
+  const entrypoint = path.join(ROOT_DIR, 'public', 'index.html');
+  const outdir = path.join(ROOT_DIR, 'build');
 
-  console.log('🎨 Building Tailwind CSS...');
-  try {
-    execSync(`bunx @tailwindcss/cli -i "${inputFile}" -o "${outputFile}" --minify`, {
-      cwd: ROOT_DIR,
-      stdio: 'inherit'
-    });
-    console.log('✓ Tailwind CSS compiled to public/css/styles.css\n');
-  } catch (error) {
-    console.error('Failed to build Tailwind CSS:', error.message);
-    process.exit(1);
-  }
-}
-
-/**
- * Build frontend JavaScript bundle using Bun's bundler
- */
-async function buildFrontendJS() {
-  const entrypoint = path.join(ROOT_DIR, 'public', 'app.js');
-  const outdir = path.join(ROOT_DIR, 'public', 'dist');
-
-  console.log('📦 Bundling frontend JavaScript...');
+  console.log('🌐 Building static site with Bun...');
 
   try {
     const result = await Bun.build({
       entrypoints: [entrypoint],
       outdir: outdir,
-      target: 'browser',
-      format: 'esm',
       minify: true,
       sourcemap: 'linked',
-      naming: '[name].bundle.[ext]',
+      // Tailwind is handled automatically via bun-plugin-tailwind
+      // when using <link rel="stylesheet" href="tailwindcss" />
     });
 
     if (!result.success) {
-      console.error('Bundle failed:');
+      console.error('Build failed:');
       for (const log of result.logs) {
         console.error(log);
       }
       process.exit(1);
     }
 
-    // Find the main bundle output
-    const mainBundle = result.outputs.find(o => o.kind === 'entry-point');
-    if (mainBundle) {
-      const bundleName = path.basename(mainBundle.path);
-      const bundleSize = (mainBundle.size / 1024).toFixed(1);
-      console.log(`✓ Frontend JS bundled to public/dist/${bundleName} (${bundleSize} KB)\n`);
-    }
+    // Calculate total size
+    const totalSize = result.outputs.reduce((sum, o) => sum + o.size, 0);
+    const jsFiles = result.outputs.filter(o => o.path.endsWith('.js'));
+    const cssFiles = result.outputs.filter(o => o.path.endsWith('.css'));
+
+    console.log(`✓ Static site built to ./build/`);
+    console.log(`  HTML: 1 file`);
+    console.log(`  JS: ${jsFiles.length} file(s) (${(jsFiles.reduce((s, f) => s + f.size, 0) / 1024).toFixed(1)} KB)`);
+    console.log(`  CSS: ${cssFiles.length} file(s) (${(cssFiles.reduce((s, f) => s + f.size, 0) / 1024).toFixed(1)} KB)`);
+    console.log(`  Total: ${(totalSize / 1024).toFixed(1)} KB\n`);
 
     return result;
   } catch (error) {
-    console.error('Failed to bundle frontend JS:', error.message);
+    console.error('Failed to build static site:', error.message);
     process.exit(1);
   }
 }
@@ -116,9 +99,8 @@ async function buildFrontendJS() {
 async function build() {
   console.log('🔨 Building cross-provider design plugins...\n');
 
-  // Build frontend assets
-  buildTailwindCSS();
-  await buildFrontendJS();
+  // Build static site (HTML, JS, CSS with Tailwind)
+  await buildStaticSite();
 
   // Read source files
   const { commands, skills } = readSourceFiles(ROOT_DIR);
