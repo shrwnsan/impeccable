@@ -304,9 +304,23 @@ code {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
   text-align: center;
   pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 0.35em 1em;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--color-ink);
+  backdrop-filter: blur(4px);
 }
 
 .hero-title-overlay {
@@ -363,6 +377,15 @@ code {
   margin: 0 auto;
   padding: var(--spacing-2xl) var(--spacing-lg);
   background: var(--color-paper);
+}
+
+.hero-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-ink);
+  margin: 0 0 var(--spacing-lg) 0;
 }
 
 .hero-content {
@@ -1783,6 +1806,36 @@ code {
   left: 0;
   color: var(--color-success, #22c55e);
   font-weight: 600;
+}
+
+/* Contribution CTA */
+.contribute-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-xl);
+  border-top: 1px solid var(--color-mist);
+  text-align: center;
+}
+
+.contribute-text {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-style: italic;
+  color: var(--color-charcoal);
+  margin: 0;
+}
+
+.btn-small {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: 0.8rem;
+  gap: var(--spacing-xs);
+}
+
+.btn-small svg {
+  flex-shrink: 0;
 }
 
 /* ============================================
