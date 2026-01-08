@@ -20,7 +20,7 @@ Note what you've learned and what remains unclear.
 
 ## Step 2: Ask UX-Focused Questions
 
-STOP and call the AskUserQuestion tool to clarify. Focus only on what you couldn't infer from the codebase:
+STOP and call the AskUserQuestionTool to clarify. Focus only on what you couldn't infer from the codebase:
 
 ### Users & Purpose
 - Who uses this? What's their context when using it?
