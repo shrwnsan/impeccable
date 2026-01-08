@@ -301,7 +301,7 @@ export const PROVIDER_PLACEHOLDERS = {
   'claude-code': {
     model: 'Claude',
     config_file: 'CLAUDE.md',
-    ask_instruction: 'use the AskUserQuestion tool to clarify what you cannot infer.'
+    ask_instruction: 'STOP and call the AskUserQuestion tool to clarify.'
   },
   'cursor': {
     model: 'the model',

@@ -20,7 +20,7 @@ Note what you've learned and what remains unclear.
 
 ## Step 2: Ask UX-Focused Questions
 
-use the AskUserQuestion tool to clarify what you cannot infer. Focus only on what you couldn't infer from the codebase:
+STOP and call the AskUserQuestion tool to clarify. Focus only on what you couldn't infer from the codebase:
 
 ### Users & Purpose
 - Who uses this? What's their context when using it?
