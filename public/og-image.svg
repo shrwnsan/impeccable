@@ -22,7 +22,7 @@
   <text x="80" y="460" font-family="ui-monospace, monospace" font-size="24" fill="#1a1a1a">
     <tspan fill="#1a1a1a" font-weight="500">1</tspan><tspan fill="#6b7280"> skill</tspan>
     <tspan fill="#6b7280" dx="20">+</tspan>
-    <tspan fill="#1a1a1a" font-weight="500" dx="20">15</tspan><tspan fill="#6b7280"> commands</tspan>
+    <tspan fill="#1a1a1a" font-weight="500" dx="20">17</tspan><tspan fill="#6b7280"> commands</tspan>
     <tspan fill="#6b7280" dx="20">+</tspan>
     <tspan fill="#6b7280" dx="20">anti-patterns</tspan>
   </text>
