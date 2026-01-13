@@ -143,19 +143,19 @@ async function build() {
 
   // Transform for each provider (unprefixed) - run concurrently
   await Promise.all([
-    Promise.resolve(transformCursor(commands, skills, DIST_DIR, patterns)),
-    Promise.resolve(transformClaudeCode(commands, skills, DIST_DIR, patterns)),
-    Promise.resolve(transformGemini(commands, skills, DIST_DIR, patterns)),
-    Promise.resolve(transformCodex(commands, skills, DIST_DIR, patterns))
+    transformCursor(commands, skills, DIST_DIR, patterns),
+    transformClaudeCode(commands, skills, DIST_DIR, patterns),
+    transformGemini(commands, skills, DIST_DIR, patterns),
+    transformCodex(commands, skills, DIST_DIR, patterns)
   ]);
 
   // Transform for each provider (prefixed with i-) - run concurrently
   const prefixOptions = { prefix: 'i-', outputSuffix: '-prefixed' };
   await Promise.all([
-    Promise.resolve(transformCursor(commands, skills, DIST_DIR, patterns, prefixOptions)),
-    Promise.resolve(transformClaudeCode(commands, skills, DIST_DIR, patterns, prefixOptions)),
-    Promise.resolve(transformGemini(commands, skills, DIST_DIR, patterns, prefixOptions)),
-    Promise.resolve(transformCodex(commands, skills, DIST_DIR, patterns, prefixOptions))
+    transformCursor(commands, skills, DIST_DIR, patterns, prefixOptions),
+    transformClaudeCode(commands, skills, DIST_DIR, patterns, prefixOptions),
+    transformGemini(commands, skills, DIST_DIR, patterns, prefixOptions),
+    transformCodex(commands, skills, DIST_DIR, patterns, prefixOptions)
   ]);
 
   // Create ZIP bundles (both unprefixed and prefixed)
