@@ -2,50 +2,6 @@ import path from 'path';
 import { cleanDir, ensureDir, writeFile, generateYamlFrontmatter, replacePlaceholders } from '../utils.js';
 
 /**
- * Generate markdown from structured patterns/antipatterns data
- */
-function generatePatternsMarkdown(patterns) {
-  if (!patterns || (!patterns.patterns?.length && !patterns.antipatterns?.length)) {
-    return '';
-  }
-
-  let md = `## Design Patterns Reference
-
-This reference defines what TO do and what NOT to do when creating frontend interfaces. These patterns fight against model bias—the tendency of LLMs to converge on the same predictable choices.
-
-### What TO Do (Patterns)
-
-Focus on intentional, distinctive design choices:
-`;
-
-  for (const category of patterns.patterns || []) {
-    md += `\n**${category.name}**:\n`;
-    for (const item of category.items || []) {
-      md += `- ${item}\n`;
-    }
-  }
-
-  md += `
-### What NOT to Do (Anti-Patterns)
-
-These patterns create generic "AI slop" aesthetics:
-`;
-
-  for (const category of patterns.antipatterns || []) {
-    md += `\n**${category.name}**:\n`;
-    for (const item of category.items || []) {
-      md += `- ${item}\n`;
-    }
-  }
-
-  md += `
-These anti-patterns are baked into training data from countless generic templates. Without explicit guidance, AI reproduces them. This skill ensures your AI knows both what to do AND what to avoid.
-`;
-
-  return md;
-}
-
-/**
  * Codex Transformer (Full Featured - Agent Skills Standard)
  *
  * Commands: Uses argument-hint format with $VARIABLE placeholders in .codex/prompts/
