@@ -141,18 +141,22 @@ async function build() {
   const patterns = readPatterns(ROOT_DIR);
   console.log(`📖 Read ${commands.length} commands, ${skills.length} skills, and ${patterns.patterns.length + patterns.antipatterns.length} pattern categories\n`);
 
-  // Transform for each provider (unprefixed)
-  transformCursor(commands, skills, DIST_DIR, patterns);
-  transformClaudeCode(commands, skills, DIST_DIR, patterns);
-  transformGemini(commands, skills, DIST_DIR, patterns);
-  transformCodex(commands, skills, DIST_DIR, patterns);
+  // Transform for each provider (unprefixed) - run concurrently
+  await Promise.all([
+    transformCursor(commands, skills, DIST_DIR, patterns),
+    transformClaudeCode(commands, skills, DIST_DIR, patterns),
+    transformGemini(commands, skills, DIST_DIR, patterns),
+    transformCodex(commands, skills, DIST_DIR, patterns)
+  ]);
 
-  // Transform for each provider (prefixed with i-)
+  // Transform for each provider (prefixed with i-) - run concurrently
   const prefixOptions = { prefix: 'i-', outputSuffix: '-prefixed' };
-  transformCursor(commands, skills, DIST_DIR, patterns, prefixOptions);
-  transformClaudeCode(commands, skills, DIST_DIR, patterns, prefixOptions);
-  transformGemini(commands, skills, DIST_DIR, patterns, prefixOptions);
-  transformCodex(commands, skills, DIST_DIR, patterns, prefixOptions);
+  await Promise.all([
+    transformCursor(commands, skills, DIST_DIR, patterns, prefixOptions),
+    transformClaudeCode(commands, skills, DIST_DIR, patterns, prefixOptions),
+    transformGemini(commands, skills, DIST_DIR, patterns, prefixOptions),
+    transformCodex(commands, skills, DIST_DIR, patterns, prefixOptions)
+  ]);
 
   // Create ZIP bundles (both unprefixed and prefixed)
   await createAllZips(DIST_DIR);
